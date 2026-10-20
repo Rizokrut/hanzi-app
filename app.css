@@ -1,0 +1,276 @@
+/* Ханьцзы — офлайн-тренажёр иероглифов
+   Палитра: селадон (светлая) / ночная тушь (тёмная). Тоны окрашены. */
+@font-face{font-family:"HSK Kai";src:url("fonts/wenkai-hsk.woff") format("woff");font-display:swap}
+:root{
+  --bg:#E7EDEA;
+  --surface:#F6F8F6;
+  --raised:#FFFFFF;
+  --ink:#16211F;
+  --ink-2:#4B5A57;
+  --ink-3:#7C8A87;
+  --line:#CFD9D5;
+  --jade:#1E6B5B;
+  --jade-ink:#FFFFFF;
+  --jade-soft:#D3E6DF;
+  --grid:#C2553F;
+  --t1:#C93A2E; --t2:#C9781A; --t3:#2C8550; --t4:#2B62C9; --t5:#7C8A87;
+  --again:#B5432F; --hard:#9A6A12; --good:#1E6B5B; --easy:#2B62C9;
+  --han:"HSK Kai","Kaiti SC","STKaiti","KaiTi","Kaiti","Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC",serif;
+  --ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --r-s:8px; --r-m:14px; --r-l:22px;
+  --tabs-h:62px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#111917; --surface:#18221F; --raised:#1F2B28; --ink:#E4ECE9; --ink-2:#A9B7B3; --ink-3:#74837F;
+    --line:#2C3A36; --jade:#5BB79F; --jade-ink:#0D1513; --jade-soft:#20372F; --grid:#D9705A;
+    --t1:#F0695C; --t2:#EFA44A; --t3:#5CC47F; --t4:#6E9BF2; --t5:#8D9A97;
+    --again:#E6735E; --hard:#D9A443; --good:#5BB79F; --easy:#6E9BF2;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111917; --surface:#18221F; --raised:#1F2B28; --ink:#E4ECE9; --ink-2:#A9B7B3; --ink-3:#74837F;
+  --line:#2C3A36; --jade:#5BB79F; --jade-ink:#0D1513; --jade-soft:#20372F; --grid:#D9705A;
+  --t1:#F0695C; --t2:#EFA44A; --t3:#5CC47F; --t4:#6E9BF2; --t5:#8D9A97;
+  --again:#E6735E; --hard:#D9A443; --good:#5BB79F; --easy:#6E9BF2;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 var(--ui);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2.5px solid var(--jade);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+.han{font-family:var(--han);font-weight:400}
+
+#app{display:flex;flex-direction:column;min-height:100%;max-width:640px;margin:0 auto}
+
+/* ---------- шапка ---------- */
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:6px;padding:calc(env(safe-area-inset-top) + 8px) 16px 8px;background:var(--bg)}
+.bar-title{flex:1;margin:0;font-size:28px;line-height:1.15;font-weight:700;letter-spacing:-.01em}
+.bar.sub .bar-title{font-size:19px;font-weight:600}
+.bar-back{width:38px;height:38px;margin-left:-10px;display:grid;place-items:center;border-radius:50%;color:var(--jade)}
+.bar-back svg{width:24px;height:24px}
+.bar-right{display:flex;gap:4px}
+.icon-btn{min-width:38px;height:38px;padding:0 10px;border-radius:19px;display:inline-grid;place-items:center;color:var(--jade);font-weight:600;font-size:15px}
+
+main{flex:1;padding:4px 16px calc(var(--tabs-h) + env(safe-area-inset-bottom) + 24px)}
+main:focus{outline:none}
+
+/* ---------- нижние вкладки ---------- */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:center;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tabs button{flex:1;max-width:160px;height:var(--tabs-h);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:11.5px;color:var(--ink-3)}
+.tab-glyph{font-family:var(--han);font-size:24px;line-height:1.1}
+.tabs button.on{color:var(--jade)}
+body.session .tabs{display:none}
+body.session main{padding-bottom:calc(env(safe-area-inset-bottom) + 24px)}
+
+/* ---------- общие блоки ---------- */
+.section{margin:22px 0 10px;font-size:13px;color:var(--ink-3);font-weight:600}
+.panel{background:var(--surface);border-radius:var(--r-m);padding:14px 16px}
+.panel + .panel{margin-top:10px}
+.muted{color:var(--ink-2)}
+.small{font-size:13.5px}
+.row{display:flex;align-items:center;gap:10px}
+.grow{flex:1;min-width:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 18px;border-radius:var(--r-m);background:var(--raised);border:1px solid var(--line);font-weight:600}
+.btn.primary{background:var(--jade);color:var(--jade-ink);border-color:transparent}
+.btn.block{display:flex;width:100%}
+.btn.small{min-height:36px;padding:0 12px;font-size:14px;border-radius:10px}
+.btn:disabled{opacity:.45}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{height:34px;padding:0 13px;border-radius:17px;background:var(--surface);border:1px solid var(--line);font-size:14.5px;font-weight:600;color:var(--ink-2)}
+.chip.on{background:var(--jade);border-color:var(--jade);color:var(--jade-ink)}
+.scroll-x{display:flex;gap:6px;overflow-x:auto;margin:0 -16px;padding:2px 16px;scrollbar-width:none}
+.scroll-x::-webkit-scrollbar{display:none}
+.scroll-x .chip{flex:none}
+
+/* тоны */
+.t1{color:var(--t1)}.t2{color:var(--t2)}.t3{color:var(--t3)}.t4{color:var(--t4)}.t5{color:var(--t5)}
+
+/* ---------- 米字格: сетка для иероглифа (фирменный мотив) ---------- */
+.grid{position:relative;aspect-ratio:1;border:1.5px solid color-mix(in srgb,var(--grid) 70%,transparent);background:var(--raised);border-radius:4px}
+.grid::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+   linear-gradient(to right,transparent calc(50% - .5px),color-mix(in srgb,var(--grid) 38%,transparent) calc(50% - .5px),color-mix(in srgb,var(--grid) 38%,transparent) calc(50% + .5px),transparent calc(50% + .5px)),
+   linear-gradient(to bottom,transparent calc(50% - .5px),color-mix(in srgb,var(--grid) 38%,transparent) calc(50% - .5px),color-mix(in srgb,var(--grid) 38%,transparent) calc(50% + .5px),transparent calc(50% + .5px)),
+   linear-gradient(to top right,transparent calc(50% - .5px),color-mix(in srgb,var(--grid) 20%,transparent) calc(50% - .5px),color-mix(in srgb,var(--grid) 20%,transparent) calc(50% + .5px),transparent calc(50% + .5px)),
+   linear-gradient(to bottom right,transparent calc(50% - .5px),color-mix(in srgb,var(--grid) 20%,transparent) calc(50% - .5px),color-mix(in srgb,var(--grid) 20%,transparent) calc(50% + .5px),transparent calc(50% + .5px))}
+.grid > *{position:relative}
+.grid svg{display:block;width:100%;height:100%}
+
+/* ---------- экран «Учить» ---------- */
+.today{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;padding:18px 16px}
+.today .grid{width:112px}
+.today .grid .han{position:absolute;inset:0;display:grid;place-items:center;font-size:80px;line-height:1}
+.today-n{font-size:40px;font-weight:700;line-height:1;letter-spacing:-.02em}
+.today-n small{font-size:15px;font-weight:600;color:var(--ink-2);margin-left:4px;letter-spacing:0}
+.today-sub{margin-top:6px;color:var(--ink-2);font-size:14.5px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat b{display:block;font-size:22px;line-height:1.2}
+.stat span{font-size:13px;color:var(--ink-2)}
+.week{display:flex;gap:6px;align-items:flex-end;height:46px;margin-top:10px}
+.week i{flex:1;background:var(--jade-soft);border-radius:4px 4px 2px 2px;min-height:4px}
+.week i.on{background:var(--jade)}
+.week-l{display:flex;gap:6px;font-size:11px;color:var(--ink-3);margin-top:4px}
+.week-l span{flex:1;text-align:center}
+
+/* ---------- карточка ---------- */
+.session-top{display:flex;align-items:center;gap:10px;margin:4px 0 14px}
+.progress{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--jade);transition:width .25s}
+.counts{font-size:13px;font-weight:600;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.counts .n{color:var(--t4)} .counts .l{color:var(--again)} .counts .r{color:var(--good)}
+.card{background:var(--raised);border-radius:var(--r-l);padding:22px 18px 18px;min-height:56vh;display:flex;flex-direction:column;box-shadow:0 1px 0 var(--line)}
+.card-word{font-family:var(--han);text-align:center;line-height:1.1;font-size:clamp(64px,22vw,112px);margin:18px 0 8px;word-break:keep-all}
+.card-word.long{font-size:clamp(46px,14vw,72px)}
+.card-q{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.card-q .meaning{font-size:24px;font-weight:600;max-width:28ch}
+.card-hint{color:var(--ink-3);font-size:14px;margin-top:10px}
+.card-a{border-top:1px dashed var(--line);margin-top:14px;padding-top:14px}
+.card-a:first-child{border-top:0;margin-top:auto;margin-bottom:auto;padding-top:0}
+.py{font-size:22px;font-weight:600;letter-spacing:.01em}
+.meaning-a{font-size:19px;margin-top:4px}
+.en-note{font-size:12px;color:var(--ink-3);margin-left:6px;font-weight:500}
+.example{margin-top:14px;padding:12px 14px;background:var(--surface);border-radius:var(--r-m)}
+.panel .example{background:var(--bg)}
+.example .zh{font-family:var(--han);font-size:22px;line-height:1.35}
+.example .zh mark{background:none;color:var(--jade);font-weight:700}
+.example .pyl{font-size:13.5px;color:var(--ink-2);margin-top:2px}
+.example .ru{font-size:15px;margin-top:4px}
+.speak{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--jade-soft);color:var(--jade);flex:none}
+.speak svg{width:20px;height:20px}
+.speak.sm{width:32px;height:32px}.speak.sm svg{width:16px;height:16px}
+.char-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.char-link{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;border-radius:12px;background:var(--surface);font-size:13.5px;color:var(--ink-2)}
+.char-link .han{font-size:28px;color:var(--ink);width:38px;height:38px;display:grid;place-items:center;background:var(--raised);border-radius:8px}
+.grades{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.grade{min-height:58px;border-radius:var(--r-m);background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.grade small{font-weight:500;font-size:12px;color:var(--ink-3);margin-top:1px}
+.grade.g0{color:var(--again)}.grade.g1{color:var(--hard)}.grade.g2{color:var(--good)}.grade.g3{color:var(--easy)}
+.flip{margin-top:14px}
+.done{text-align:center;padding:40px 10px}
+.done .han{font-size:96px;line-height:1}
+
+/* ---------- словарь ---------- */
+.search{display:flex;align-items:center;gap:8px;height:44px;padding:0 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line);margin-bottom:10px}
+.search input{flex:1;border:0;background:none;outline:none;font-size:16px;min-width:0}
+.search svg{width:18px;height:18px;color:var(--ink-3);flex:none}
+.list{margin-top:12px;background:var(--surface);border-radius:var(--r-m);overflow:hidden}
+.item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 14px;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item .w{font-family:var(--han);font-size:26px;min-width:2.2em;line-height:1.2}
+.item .m{flex:1;min-width:0}
+.item .p{font-size:14px;font-weight:600}
+.item .d{font-size:14px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--line)}
+.dot.s1{background:var(--hard)}.dot.s2{background:var(--good)}.dot.s3{background:var(--jade);box-shadow:0 0 0 2px var(--jade-soft)}
+.more{display:block;width:100%;padding:14px;color:var(--jade);font-weight:600;text-align:center}
+.lvl-meta{font-size:13px;color:var(--ink-3);margin-top:8px}
+
+/* ---------- страница слова / иероглифа ---------- */
+.word-head{display:flex;gap:14px;align-items:center}
+.word-head .w{font-family:var(--han);font-size:58px;line-height:1.1}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tag{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--jade-soft);color:var(--jade)}
+.writer-wrap{display:grid;grid-template-columns:1fr;gap:12px;justify-items:center}
+.writer{width:min(78vw,300px)}
+.writer-ctrl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.writer-msg{min-height:22px;font-size:14px;color:var(--ink-2);text-align:center}
+.seq{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+.seq-i{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 2px 8px;border-radius:10px;background:var(--surface);text-align:center}
+.seq-i .grid{width:54px}
+.seq-i b{font-size:11px;color:var(--ink-3);font-weight:600}
+.seq-i span{font-family:var(--han);font-size:14px;line-height:1.1}
+.seq-i.on{outline:2px solid var(--jade)}
+.stroke-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.stroke-row:last-child{border-bottom:0}
+.stroke-row .n{width:22px;font-size:13px;color:var(--ink-3);font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.stroke-row .shape{font-family:var(--han);font-size:30px;width:40px;text-align:center}
+.stroke-row .nm{flex:1;min-width:0}
+.stroke-row .nm b{font-family:var(--han);font-size:17px;font-weight:400;margin-right:6px}
+.stroke-row .nm i{font-style:normal;color:var(--ink-2);font-size:14px}
+.stroke-row .nm div{font-size:14px;color:var(--ink-2)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:15px}
+.kv dt{color:var(--ink-3)}
+.kv dd{margin:0}
+.kv .han{font-size:20px}
+.hint-en{font-size:13px;color:var(--ink-3)}
+
+/* ---------- черты ---------- */
+.stroke-card{display:flex;gap:14px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);width:100%;text-align:left}
+.stroke-card:last-child{border-bottom:0}
+.stroke-card .shape{font-family:var(--han);font-size:40px;width:52px;height:52px;display:grid;place-items:center;background:var(--raised);border-radius:10px;flex:none}
+.stroke-card .ex{font-family:var(--han);font-size:20px;color:var(--ink-2);letter-spacing:.15em}
+.rule{display:grid;grid-template-columns:92px 1fr;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.rule:last-child{border-bottom:0}
+.rule .grid{width:92px}
+.rule b{display:block;font-size:16px}
+.rule .zh{font-family:var(--han);font-size:17px;color:var(--ink-2)}
+
+/* ---------- прогресс / настройки ---------- */
+.lv-row{display:grid;grid-template-columns:62px 1fr 78px;gap:12px;align-items:center;padding:9px 0}
+.lv-row b{font-size:14px}
+.bar3{height:10px;border-radius:5px;background:var(--line);overflow:hidden;display:flex}
+.bar3 i{display:block;height:100%}
+.bar3 .k{background:var(--jade)}.bar3 .s{background:var(--hard)}
+.lv-row span{text-align:right;font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.setting{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.setting:last-child{border-bottom:0}
+.setting label{flex:1}
+.setting label small{display:block;font-size:13px;color:var(--ink-3)}
+.stepper{display:flex;align-items:center;gap:2px;background:var(--raised);border:1px solid var(--line);border-radius:10px}
+.stepper button{width:36px;height:34px;font-size:20px;color:var(--jade)}
+.stepper output{min-width:30px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+select{height:36px;border-radius:10px;border:1px solid var(--line);background:var(--raised);padding:0 8px;max-width:52vw}
+.switch{appearance:none;-webkit-appearance:none;width:50px;height:30px;border-radius:15px;background:var(--line);position:relative;flex:none;transition:background .2s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .2s}
+.switch:checked{background:var(--jade)}
+.switch:checked::after{transform:translateX(20px)}
+textarea{width:100%;min-height:110px;border-radius:10px;border:1px solid var(--line);background:var(--raised);padding:10px;font-size:13px}
+.offline{display:flex;gap:10px;align-items:center;font-size:14px}
+.offline .dot{width:10px;height:10px}
+
+/* ---------- лист снизу ---------- */
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(10,16,14,.42);display:flex;align-items:flex-end;justify-content:center}
+.sheet-body{width:100%;max-width:640px;max-height:88vh;overflow:auto;background:var(--bg);border-radius:var(--r-l) var(--r-l) 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 18px)}
+.sheet-body h2{margin:0 0 10px;font-size:20px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top) + 58px);z-index:30;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;max-width:calc(100% - 32px);box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.toast button{color:var(--jade-soft);font-weight:700;margin-left:10px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (min-width:560px){.today .grid{width:132px}.today .grid .han{font-size:96px}}
+
+/* ---------- письмо в карточках ---------- */
+.write-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;width:100%}
+.write-row{flex-wrap:nowrap}
+.write-cell{flex:1 1 0;min-width:0;max-width:230px;touch-action:none}
+.write-cell.on{box-shadow:0 0 0 3px var(--jade-soft)}
+.write-result{text-align:center;font-weight:700;font-size:15px;margin-bottom:6px}
+.write-result.ok{color:var(--good)} .write-result.bad{color:var(--again)}
+.grade.suggest{border:2px solid currentColor;background:var(--raised)}
+
+/* ---------- словарь ---------- */
+.char-open{display:flex;align-items:center;gap:14px;width:100%;text-align:left;margin-top:12px;padding:10px 14px;border-radius:var(--r-m);background:var(--jade-soft);color:var(--ink)}
+.char-open .han{font-size:40px;line-height:1;width:52px;height:52px;display:grid;place-items:center;background:var(--raised);border-radius:10px}
+.char-open small{display:block;color:var(--ink-2);font-size:13px}
+.empty{text-align:left;margin-top:12px}
+.empty p{margin:6px 0 12px}
+
+/* ---------- форма своего слова ---------- */
+.form{display:flex;flex-direction:column;gap:10px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.form label small{font-weight:400;color:var(--ink-3)}
+.form input{height:44px;border-radius:10px;border:1px solid var(--line);background:var(--raised);padding:0 12px;font-size:16px;color:var(--ink)}
+.form input.han-input{font-family:var(--han);font-size:20px}
+
+/* ---------- автор ---------- */
+.author{display:flex;gap:14px;align-items:center;margin-bottom:10px}
+.author-mark{width:56px;flex:none}
+.author-mark .han{position:absolute;inset:0;display:grid;place-items:center;font-size:40px;color:var(--jade)}
+.author b{font-size:17px}
+.credit{text-align:center;color:var(--ink-3);font-size:12.5px;margin:22px 0 0}

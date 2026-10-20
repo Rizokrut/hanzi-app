@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Ханьцзы</title>
+<meta name="description" content="Иероглифы HSK 3.0: карточки, порядок черт, озвучка. Работает без интернета.">
+<meta name="theme-color" content="#E7EDEA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111917" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ханьцзы">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div id="app">
+  <header class="bar" id="bar">
+    <button class="bar-back" id="back" aria-label="Назад" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <h1 class="bar-title" id="title">Учить</h1>
+    <div class="bar-right" id="barRight"></div>
+  </header>
+  <main id="view" tabindex="-1"></main>
+  <nav class="tabs" id="tabs" aria-label="Разделы">
+    <button data-tab="learn" class="on"><span class="tab-glyph">学</span><span>Учить</span></button>
+    <button data-tab="dict"><span class="tab-glyph">词</span><span>Слова</span></button>
+    <button data-tab="strokes"><span class="tab-glyph">笔</span><span>Черты</span></button>
+    <button data-tab="me"><span class="tab-glyph">我</span><span>Прогресс</span></button>
+  </nav>
+</div>
+<div id="sheet" class="sheet" hidden><div class="sheet-body" id="sheetBody"></div></div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script src="lib/hanzi-writer.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
