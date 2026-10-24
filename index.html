@@ -1,41 +1,4071 @@
-<!doctype html>
-<html lang="ru">
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>Ханьцзы</title>
-<meta name="description" content="Иероглифы HSK 3.0: карточки, порядок черт, озвучка. Работает без интернета.">
-<meta name="theme-color" content="#E7EDEA" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#111917" media="(prefers-color-scheme: dark)">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Ханьцзы">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="app.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0d1512" />
+  <title>Ханьцзы Pro — Изучение китайских иероглифов, прописи и грамматика (Офлайн PWA)</title>
+  <style>
+    :root, [data-theme="dark"] {
+      --bg-main: #0d1512;
+      --bg-surface: #15221e;
+      --bg-card: #1b2b26;
+      --bg-elevated: #223630;
+      --bg-input: #101b17;
+      --border-color: #294038;
+      --border-subtle: #1f312b;
+      --text-main: #eaf4f0;
+      --text-secondary: #9bb5ac;
+      --text-muted: #68857b;
+      --accent: #5bb396;
+      --accent-hover: #6ec4a8;
+      --accent-soft: rgba(91, 179, 150, 0.16);
+      --accent-text: #081812;
+      --grid-bg: #1c2724;
+      --grid-border: #7d4838;
+      --grid-line: #4e3128;
+      --danger: #ef6461;
+      --danger-soft: rgba(239, 100, 97, 0.16);
+      --warning: #f4a261;
+      --warning-soft: rgba(244, 162, 97, 0.16);
+      --success: #52b788;
+      --success-soft: rgba(82, 183, 136, 0.16);
+      --info: #56cfe1;
+      --info-soft: rgba(86, 207, 225, 0.16);
+      --tone1: #64b5f6;
+      --tone2: #66bb6a;
+      --tone3: #ffa726;
+      --tone4: #ef5350;
+      --tone5: #9e9e9e;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.38);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-pill: 999px;
+    }
+
+    [data-theme="light"] {
+      --bg-main: #f3f7f5;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --bg-elevated: #e8f1ed;
+      --bg-input: #edf4f1;
+      --border-color: #cfe0d9;
+      --border-subtle: #dfece6;
+      --text-main: #13241e;
+      --text-secondary: #466359;
+      --text-muted: #759288;
+      --accent: #2d8a6e;
+      --accent-hover: #237058;
+      --accent-soft: rgba(45, 138, 110, 0.14);
+      --accent-text: #ffffff;
+      --grid-bg: #fcfaf7;
+      --grid-border: #b5654d;
+      --grid-line: #e2beb3;
+      --shadow: 0 8px 24px rgba(19, 36, 30, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding-bottom: 86px;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    .hanzi-font {
+      font-family: "Kaiti", "STKaiti", "KaiTi", "PingFang SC", "Noto Serif SC", "Microsoft YaHei", serif;
+    }
+
+    /* Layout Container */
+    .app-shell {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 16px 16px 32px;
+    }
+
+    /* Top Header Bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 4px 16px;
+      gap: 12px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .offline-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid rgba(91, 179, 150, 0.3);
+    }
+
+    /* Cards & Sections */
+    .section-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .section-subtitle {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Course Pills (Screenshot 1 upgrade) */
+    .course-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .course-pill {
+      appearance: none;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-main);
+      padding: 8px 15px;
+      border-radius: var(--radius-pill);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .course-pill:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .course-pill.active {
+      background: var(--accent);
+      color: var(--accent-text);
+      border-color: var(--accent);
+      box-shadow: 0 4px 14px rgba(91, 179, 150, 0.3);
+    }
+
+    .course-pill.my-words-pill {
+      border-color: rgba(244, 162, 97, 0.5);
+    }
+
+    .course-pill.my-words-pill.active {
+      background: linear-gradient(135deg, #5bb396, #3d997c);
+      color: #071712;
+      border-color: #6ec4a8;
+    }
+
+    .pill-count {
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 99px;
+      background: rgba(0, 0, 0, 0.22);
+      color: inherit;
+    }
+
+    /* Quick My Words Panel inside Learn Tab */
+    .my-words-inline-box {
+      background: var(--bg-card);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+
+    .my-words-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .mini-word-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .mini-word-chip:hover {
+      border-color: var(--accent);
+    }
+
+    /* Study Mode Selector */
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .mode-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-align: left;
+      transition: all 0.16s ease;
+    }
+
+    .mode-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .mode-btn.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Hero Study Card */
+    .study-hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .hero-left {
+      flex: 1;
+      min-width: 210px;
+    }
+
+    .hero-preview-grid {
+      width: 112px;
+      height: 112px;
+      background: var(--grid-bg);
+      border: 2px solid var(--grid-border);
+      border-radius: 14px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 62px;
+      color: var(--text-main);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .hero-preview-grid::before,
+    .hero-preview-grid::after {
+      content: "";
+      position: absolute;
+      background: var(--grid-line);
+      pointer-events: none;
+    }
+    .hero-preview-grid::before {
+      width: 100%;
+      height: 1px;
+      top: 50%;
+      left: 0;
+    }
+    .hero-preview-grid::after {
+      width: 1px;
+      height: 100%;
+      left: 50%;
+      top: 0;
+    }
+
+    /* Buttons */
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-main);
+      padding: 10px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.18s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-text);
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12.5px;
+    }
+
+    .btn-icon {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      color: var(--accent);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .btn-icon:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+    }
+
+    /* Stats Grid */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 520px) {
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* SRS Swipeable Card Container */
+    .srs-stage {
+      position: relative;
+      perspective: 1000px;
+      margin: 8px 0 14px;
+    }
+
+    .srs-card {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-color);
+      border-radius: 22px;
+      padding: 22px 20px;
+      min-height: 370px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      box-shadow: var(--shadow);
+      transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.2s ease;
+      touch-action: pan-y;
+    }
+
+    .srs-card.dragging {
+      transition: none;
+    }
+
+    .swipe-badge {
+      position: absolute;
+      top: 18px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.12s ease;
+      z-index: 10;
+    }
+
+    .swipe-badge.left {
+      left: 18px;
+      background: var(--danger-soft);
+      color: var(--danger);
+      border: 1.5px solid var(--danger);
+    }
+
+    .swipe-badge.right {
+      right: 18px;
+      background: var(--success-soft);
+      color: var(--success);
+      border: 1.5px solid var(--success);
+    }
+
+    .swipe-badge.down {
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--warning-soft);
+      color: var(--warning);
+      border: 1.5px solid var(--warning);
+    }
+
+    .swipe-badge.up {
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--info-soft);
+      color: var(--info);
+      border: 1.5px solid var(--info);
+    }
+
+    /* Compact SRS Bottom Bar (replaces bulky 1-2-3-4 list) */
+    .srs-compact-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .srs-grade-btn {
+      appearance: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 8px 6px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: var(--text-main);
+      transition: all 0.15s ease;
+    }
+
+    .srs-grade-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .srs-grade-btn.again { border-bottom: 3px solid var(--danger); }
+    .srs-grade-btn.hard  { border-bottom: 3px solid var(--warning); }
+    .srs-grade-btn.good  { border-bottom: 3px solid var(--success); }
+    .srs-grade-btn.easy  { border-bottom: 3px solid var(--info); }
+
+    .grade-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .grade-key {
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+    }
+
+    .grade-interval {
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
+    /* Calligraphy Grid Canvas (MiZiGe 米字格) */
+    .calligraphy-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 6px 0 12px;
+    }
+
+    .mizige-box {
+      width: 240px;
+      height: 240px;
+      background: var(--grid-bg);
+      border: 2px solid var(--grid-border);
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.25);
+      touch-action: none;
+    }
+
+    .mizige-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+
+    /* Stroke Order Screen Controls (Screenshot 2 upgrade) */
+    .stroke-mode-tabs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px 0;
+    }
+
+    .stroke-subpanel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 10px 14px;
+      margin: 8px auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-width: 560px;
+    }
+
+    .speed-chip {
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .speed-chip.active {
+      background: var(--accent);
+      color: var(--accent-text);
+      border-color: var(--accent);
+    }
+
+    .toggle-pill {
+      padding: 6px 13px;
+      border-radius: 99px;
+      font-size: 12.5px;
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .toggle-pill.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Step-by-step Stroke Sequence Cards (Screenshot 2 upgrade with Pinyin below Chinese name) */
+    .stroke-steps-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 6px 2px 12px;
+    }
+
+    .stroke-step-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 8px;
+      min-width: 86px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      flex-shrink: 0;
+    }
+
+    .stroke-step-card:hover,
+    .stroke-step-card.active {
+      border-color: var(--accent);
+      background: var(--bg-elevated);
+    }
+
+    .step-mini-svg {
+      width: 64px;
+      height: 64px;
+      background: var(--grid-bg);
+      border: 1.5px solid var(--grid-border);
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+
+    .step-num {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .step-zh {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-top: 1px;
+    }
+
+    .step-py {
+      font-size: 11.5px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 1px;
+    }
+
+    .step-ru {
+      font-size: 10px;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-top: 2px;
+      max-width: 78px;
+      line-height: 1.2;
+    }
+
+    /* Stroke Detail List */
+    .stroke-list-table {
+      display: flex;
+      flex-direction: column;
+      border-radius: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+
+    .stroke-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      cursor: pointer;
+    }
+
+    .stroke-row:last-child {
+      border-bottom: none;
+    }
+
+    .stroke-row:hover {
+      background: var(--bg-elevated);
+    }
+
+    /* Interactive Quiz / Pinyin Input / Translation Input inside SRS */
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 500px) {
+      .quiz-options {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .quiz-opt-btn {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-main);
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .quiz-opt-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .quiz-opt-btn.correct {
+      background: var(--success-soft);
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .quiz-opt-btn.wrong {
+      background: var(--danger-soft);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .text-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-main);
+      padding: 11px 14px;
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .text-input:focus {
+      border-color: var(--accent);
+    }
+
+    .tone-helper-bar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 8px 0;
+    }
+
+    .tone-key-btn {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tone-key-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Word List & Dictionary */
+    .word-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      gap: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
+    }
+
+    .word-item:hover {
+      border-color: var(--accent);
+    }
+
+    .word-hanzi {
+      font-size: 26px;
+      font-weight: 700;
+      min-width: 64px;
+    }
+
+    .word-meta {
+      flex: 1;
+    }
+
+    .word-pinyin {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .word-ru {
+      font-size: 13.5px;
+      color: var(--text-main);
+    }
+
+    /* Sentence Builder (Grammar Tab) */
+    .sentence-slots {
+      min-height: 58px;
+      background: var(--bg-input);
+      border: 2px dashed var(--border-color);
+      border-radius: 14px;
+      padding: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 12px 0;
+    }
+
+    .word-tile {
+      background: var(--bg-elevated);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.14s ease;
+    }
+
+    .word-tile:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .word-tile .tile-py {
+      font-size: 10.5px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      padding: 6px 8px 10px;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-item {
+      appearance: none;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+
+    .nav-item .nav-char {
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .nav-item.active {
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    /* Modal & Toast */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.68);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 200;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 20px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow);
+    }
+
+    .toast-box {
+      position: fixed;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--accent);
+      padding: 10px 18px;
+      border-radius: 99px;
+      font-size: 13.5px;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.22s ease;
+      z-index: 300;
+      box-shadow: var(--shadow);
+    }
+
+    .toast-box.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+  <link rel="manifest" href="manifest.webmanifest" />
 </head>
 <body>
-<div id="app">
-  <header class="bar" id="bar">
-    <button class="bar-back" id="back" aria-label="Назад" hidden>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="app-shell">
+    <!-- Top Header -->
+    <header class="top-bar">
+      <div class="brand-group">
+        <div class="brand-logo hanzi-font">汉</div>
+        <div>
+          <div class="brand-title">Ханьцзы Pro</div>
+          <div class="brand-sub">
+            <span>HSK 1–9 · Прописи · Грамматика</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="offline-pill" id="offlineStatusBadge">● Офлайн-база RU активна</span>
+        <button type="button" class="btn-icon" id="quickBackupTopBtn" onclick="openBackupModal()" title="Резервная копия (Экспорт / Импорт)">💾</button>
+        <button type="button" class="btn-icon" id="quickAddWordTopBtn" onclick="openAddWordModal()" title="Добавить своё слово">＋</button>
+      </div>
+    </header>
+
+    <!-- ================= TAB 1: УЧИТЬ (LEARN & SRS) ================= -->
+    <main id="tab-learn">
+      <!-- Dashboard View -->
+      <div id="learn-dashboard-view">
+        <!-- Course Selector Card (Updated per Attachment 1) -->
+        <section class="section-card">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Курс и источник слов для заучивания</div>
+              <div class="section-subtitle">Выберите «★ Мои слова» (отдельно или вместе с уровнями HSK), чтобы учить свой список</div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn btn-sm" id="onlyMyWordsBtn" onclick="selectOnlyMyWords()">★ Только Мои слова</button>
+              <button type="button" class="btn btn-sm" id="openAddWordFromCourseBtn" onclick="openAddWordModal()">+ Добавить слово</button>
+            </div>
+          </div>
+
+          <div class="course-pills" id="coursePillsContainer"></div>
+
+          <div class="section-subtitle" id="courseSourceCaption">
+            Новые слова берутся из выбранных уровней, в первую очередь из списка «★ Мои слова».
+          </div>
+
+          <!-- Inline preview of My Words right inside Learn Tab -->
+          <div class="my-words-inline-box" id="myWordsInlineBox">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+              <span style="font-size:13px;font-weight:700;color:var(--accent);">★ Мои слова в очереди на заучивание (<span id="myWordsCountInline">0</span>)</span>
+              <div style="display:flex;gap:6px;">
+                <button type="button" class="btn btn-sm" id="studyOnlyMyWordsNowBtn" onclick="startStudySession(true)">Учить только «Мои слова»</button>
+                <button type="button" class="btn btn-sm" id="bulkImportOpenBtn" onclick="openBulkImportModal()">Импорт списком</button>
+              </div>
+            </div>
+            <div class="my-words-chips" id="myWordsInlineChips"></div>
+          </div>
+        </section>
+
+        <!-- Study Method / Mode Selector -->
+        <section class="section-card">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Метод повторения карточек</div>
+              <div class="section-subtitle">Выберите формат тренировки или включите «Умный микс» для чередования</div>
+            </div>
+          </div>
+          <div class="mode-grid" id="studyModeGrid">
+            <button type="button" class="mode-btn active" data-mode="mix" onclick="setStudyMode('mix')">⚡ Умный микс</button>
+            <button type="button" class="mode-btn" data-mode="swipe" onclick="setStudyMode('swipe')">🃏 Свайп-карточки</button>
+            <button type="button" class="mode-btn" data-mode="pinyin" onclick="setStudyMode('pinyin')">⌨️ Написать пиньинь</button>
+            <button type="button" class="mode-btn" data-mode="quiz" onclick="setStudyMode('quiz')">🎯 Тест (4 варианта)</button>
+            <button type="button" class="mode-btn" data-mode="translate" onclick="setStudyMode('translate')">✍️ Написать перевод</button>
+            <button type="button" class="mode-btn" data-mode="draw" onclick="setStudyMode('draw')">🖌️ Нарисовать иероглиф</button>
+          </div>
+        </section>
+
+        <!-- Start Study Hero Card -->
+        <section class="section-card">
+          <div class="study-hero">
+            <div class="hero-left">
+              <div style="font-size:12.5px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;">Готово к тренировке</div>
+              <div style="font-size:22px;font-weight:800;margin:4px 0 6px;" id="todayDueSummary">12 карточек на сегодня</div>
+              <div style="font-size:13.5px;color:var(--text-secondary);margin-bottom:14px;" id="todayDueBreakdown">
+                Новых: 8 · На повторение: 4 · Мои слова: 4
+              </div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button type="button" class="btn btn-primary" id="startSessionMainBtn" onclick="startStudySession(false)">▶ Начать занятие</button>
+                <button type="button" class="btn" id="openStrokeOrderHeroBtn" onclick="openStrokeScreenForHero()">🖌️ Порядок черт</button>
+              </div>
+            </div>
+            <div class="hero-preview-grid hanzi-font" id="heroPreviewChar" onclick="openStrokeScreenForHero()" title="Открыть порядок черт и пропись">
+              了
+            </div>
+          </div>
+        </section>
+
+        <!-- Weekly Stats Card -->
+        <section class="section-card">
+          <div class="section-header">
+            <div class="section-title">Статистика и прогресс интервальных повторений</div>
+            <span style="font-size:12px;color:var(--text-secondary);">Алгоритм FSRS / Anki</span>
+          </div>
+          <div class="stats-row">
+            <div class="stat-box">
+              <div class="stat-num" id="statStreak">5</div>
+              <div class="stat-label">дней подряд</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" id="statTodayDone">0</div>
+              <div class="stat-label">карточек сегодня</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" id="statLearning">0</div>
+              <div class="stat-label">слов в изучении</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" id="statMastered">0</div>
+              <div class="stat-label">выучено надолго</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Active Study Session View (Swipe + Keyboard 1-4 + Multi-Mode) -->
+      <div id="learn-session-view" class="hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-sm" id="exitSessionBtn" onclick="endStudySession()">← Завершить</button>
+          <div style="font-size:13px;font-weight:700;color:var(--text-secondary);">
+            Карточка <span id="sessionIndexLabel">1</span> из <span id="sessionTotalLabel">10</span>
+            · <span id="sessionCurrentModeBadge" style="color:var(--accent);">Свайп</span>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="btn btn-sm" id="sessionSwitchModeBtn" onclick="cycleSessionCardMode()">Сменить метод</button>
+            <button type="button" class="btn-icon" id="sessionAudioBtn" onclick="speakCurrentSessionWord()" title="Озвучить (R)">🔊</button>
+          </div>
+        </div>
+
+        <!-- Swipe Hint Header -->
+        <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-muted);padding:0 6px 4px;">
+          <span>← Свайп влево / [1]: Снова</span>
+          <span>↓ [2]: Трудно · ↑ [4]: Легко</span>
+          <span>Свайп вправо / [3]: Хорошо →</span>
+        </div>
+
+        <!-- Interactive SRS Card Stage -->
+        <div class="srs-stage">
+          <div class="srs-card" id="srsCardElement">
+            <div class="swipe-badge left" id="badgeLeft">← Снова (1м)</div>
+            <div class="swipe-badge right" id="badgeRight">Хорошо (1д) →</div>
+            <div class="swipe-badge down" id="badgeDown">↓ Трудно (6м)</div>
+            <div class="swipe-badge up" id="badgeUp">↑ Легко (4д)</div>
+
+            <!-- Top Meta inside card -->
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--bg-elevated);color:var(--accent);" id="cardCourseTag">HSK 1</span>
+              <button type="button" class="btn btn-sm" id="openStrokeFromCardBtn" onclick="openStrokeScreenFromSession()">🖌️ Порядок черт (W)</button>
+            </div>
+
+            <!-- Dynamic Card Body rendered by active mode -->
+            <div id="srsCardBody" style="my:auto;padding:12px 0;text-align:center;"></div>
+
+            <!-- Answer / Example Reveal Block -->
+            <div id="srsAnswerBlock" class="hidden" style="border-top:1px solid var(--border-subtle);padding-top:12px;margin-top:8px;">
+              <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;">
+                <span id="srsAnswerPinyin" style="font-size:20px;font-weight:700;color:var(--accent);"></span>
+                <button type="button" class="btn-icon" id="srsSpeakWordInlineBtn" onclick="speakCurrentSessionWord()">🔊</button>
+              </div>
+              <div id="srsAnswerRu" style="font-size:18px;font-weight:700;text-align:center;margin:4px 0 8px;"></div>
+              <div id="srsAnswerDecomp" style="font-size:12px;color:var(--text-secondary);text-align:center;margin-bottom:8px;"></div>
+              <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                <div>
+                  <div id="srsExampleZh" class="hanzi-font" style="font-size:16px;font-weight:600;"></div>
+                  <div id="srsExamplePy" style="font-size:12px;color:var(--accent);"></div>
+                  <div id="srsExampleRu" style="font-size:12.5px;color:var(--text-secondary);"></div>
+                </div>
+                <button type="button" class="btn-icon" id="srsSpeakExampleBtn" onclick="speakCurrentExample()">🔊</button>
+              </div>
+            </div>
+
+            <!-- Flip / Action Footer -->
+            <div id="srsFlipFooter" style="text-align:center;margin-top:10px;">
+              <button type="button" class="btn btn-primary" style="width:100%;max-width:320px;" id="showAnswerBtn" onclick="revealSessionAnswer()">Показать ответ (Пробел)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compact Keyboard / Tap Bar (1 2 3 4) -->
+        <div class="srs-compact-bar" id="srsGradeBar">
+          <button type="button" class="srs-grade-btn again" id="gradeBtn1" onclick="gradeCurrentCard(1)">
+            <span class="grade-title"><span class="grade-key">1 / ←</span> Снова</span>
+            <span class="grade-interval">1 мин</span>
+          </button>
+          <button type="button" class="srs-grade-btn hard" id="gradeBtn2" onclick="gradeCurrentCard(2)">
+            <span class="grade-title"><span class="grade-key">2 / ↓</span> Трудно</span>
+            <span class="grade-interval">6 мин</span>
+          </button>
+          <button type="button" class="srs-grade-btn good" id="gradeBtn3" onclick="gradeCurrentCard(3)">
+            <span class="grade-title"><span class="grade-key">3 / →</span> Хорошо</span>
+            <span class="grade-interval">1 день</span>
+          </button>
+          <button type="button" class="srs-grade-btn easy" id="gradeBtn4" onclick="gradeCurrentCard(4)">
+            <span class="grade-title"><span class="grade-key">4 / ↑</span> Легко</span>
+            <span class="grade-interval">4 дня</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= STROKE ORDER & SELF-WRITE OVERLAY SCREEN (Screenshot 2 Upgrade) ================= -->
+      <div id="stroke-detail-screen" class="hidden">
+        <div class="section-card">
+          <!-- Top Bar (< 了) -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <button type="button" class="btn btn-sm" id="closeStrokeScreenBtn" onclick="closeStrokeScreen()">‹ Назад</button>
+              <span class="hanzi-font" id="strokeScreenTitleChar" style="font-size:28px;font-weight:700;">了</span>
+              <div>
+                <div id="strokeScreenPinyin" style="font-size:15px;font-weight:700;color:var(--accent);">le / liǎo</div>
+                <div id="strokeScreenRu" style="font-size:13px;color:var(--text-secondary);">частица завершённости действия; понимать</div>
+              </div>
+            </div>
+            <!-- Multi-char selector if word has >1 char -->
+            <div id="strokeMultiCharTabs" style="display:flex;gap:6px;"></div>
+          </div>
+
+          <!-- Calligraphy MiZiGe Canvas -->
+          <div class="calligraphy-wrap">
+            <div class="mizige-box">
+              <canvas id="strokeCanvas" class="mizige-canvas" width="300" height="300"></canvas>
+            </div>
+            <div style="margin-top:8px;font-size:14px;color:var(--text-secondary);font-weight:600;" id="strokeCountCaption">
+              2 черты
+            </div>
+          </div>
+
+          <!-- Primary Mode Buttons (Upgraded per Screenshot 2: Clean 2-mode switch + Audio) -->
+          <div class="stroke-mode-tabs">
+            <button type="button" class="btn btn-primary" id="modeAnimBtn" onclick="switchStrokeMode('anim')">▶ Анимация</button>
+            <button type="button" class="btn" id="modeWriteBtn" onclick="switchStrokeMode('write')">✍️ Написать самому</button>
+            <button type="button" class="btn-icon" id="strokeAudioBtn" onclick="speakStrokeChar()" title="Озвучить иероглиф">🔊</button>
+          </div>
+
+          <!-- Sub-panel 1: Animation Controls (Play/Pause, Loop until stopped, Speed selector, Contour toggle) -->
+          <div class="stroke-subpanel" id="animControlSubpanel">
+            <button type="button" class="btn btn-sm btn-primary" id="playPauseAnimBtn" onclick="toggleStrokeAnimation()">⏸ Пауза</button>
+            <button type="button" class="toggle-pill active" id="loopAnimToggleBtn" onclick="toggleStrokeLoop()">🔁 Повторять: Вкл</button>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <span style="font-size:12px;color:var(--text-secondary);margin-right:2px;">Скорость:</span>
+              <button type="button" class="speed-chip" data-speed="0.5" onclick="setStrokeSpeed(0.5)">0.5x</button>
+              <button type="button" class="speed-chip active" data-speed="1" onclick="setStrokeSpeed(1)">1x</button>
+              <button type="button" class="speed-chip" data-speed="1.5" onclick="setStrokeSpeed(1.5)">1.5x</button>
+              <button type="button" class="speed-chip" data-speed="2" onclick="setStrokeSpeed(2)">2x</button>
+            </div>
+            <button type="button" class="toggle-pill active" id="animOutlineToggleBtn" onclick="toggleContourVisibility()">👁 Контур: Вкл</button>
+          </div>
+
+          <!-- Sub-panel 2: Self-Write Controls (Shown when "Написать самому" is clicked - fixes Contour toggle bug!) -->
+          <div class="stroke-subpanel hidden" id="writeControlSubpanel">
+            <button type="button" class="toggle-pill active" id="writeOutlineToggleBtn" onclick="toggleContourVisibility()">👁 Контур: Вкл</button>
+            <button type="button" class="btn btn-sm" id="hintNextStrokeBtn" onclick="hintCurrentStroke()">💡 Подсказка черты</button>
+            <button type="button" class="btn btn-sm" id="resetWriteCanvasBtn" onclick="resetSelfWrite()">🔄 Очистить</button>
+            <span style="font-size:12.5px;font-weight:700;color:var(--accent);" id="writeProgressStatus">Черта: 1 / 2 · Нарисуйте по сетке</span>
+          </div>
+
+          <!-- Step-by-step Stroke Sequence (With Pinyin under Chinese stroke name per Attachment 2) -->
+          <div style="margin-top:16px;">
+            <div style="font-size:13.5px;font-weight:700;color:var(--text-secondary);margin-bottom:8px;">
+              Последовательность черт (нажмите на шаг для подсветки)
+            </div>
+            <div class="stroke-steps-scroll" id="strokeStepsCardsContainer"></div>
+          </div>
+
+          <!-- Detailed Stroke List by Order -->
+          <div style="margin-top:14px;">
+            <div style="font-size:13.5px;font-weight:700;color:var(--text-secondary);margin-bottom:8px;">
+              Названия черт по порядку
+            </div>
+            <div class="stroke-list-table" id="strokeDetailedListContainer"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ================= TAB 2: СЛОВА (RUSSIAN DICTIONARY & MY WORDS) ================= -->
+    <section id="tab-words" class="hidden">
+      <div class="section-card">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Русский словарь HSK 1–9 и «Мои слова»</div>
+            <div class="section-subtitle">Полностью на русском языке с пиньинем, примерами, ключами и порядком черт</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button type="button" class="btn btn-sm btn-primary" id="dictAddWordBtn" onclick="openAddWordModal()">+ Слово</button>
+            <button type="button" class="btn btn-sm" id="dictBulkImportBtn" onclick="openBulkImportModal()">Импорт списка</button>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+          <input type="text" class="text-input" id="dictSearchInput" placeholder="Поиск по иероглифу, пиньиню (ni3 / nǐ) или русскому переводу..." oninput="renderDictionaryList()" style="flex:1;min-width:220px;" />
+          <select id="dictStatusFilter" class="text-input" style="width:auto;" onchange="renderDictionaryList()">
+            <option value="all">Все статусы</option>
+            <option value="new">Новые</option>
+            <option value="learning">В изучении</option>
+            <option value="mastered">Выучено</option>
+          </select>
+        </div>
+
+        <div class="course-pills" id="dictCategoryPills"></div>
+
+        <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+          <span id="dictCountLabel">Найдено слов: 0</span>
+          <button type="button" class="btn btn-sm" id="trainFilteredWordsBtn" onclick="trainCurrentDictFilter()">▶ Учить этот список</button>
+        </div>
+
+        <div id="dictWordsContainer"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: ЧЕРТЫ И ПРОПИСИ (STROKES & CALLIGRAPHY SHEETS) ================= -->
+    <section id="tab-strokes" class="hidden">
+      <!-- Interactive Free Practice & Printable Copybooks -->
+      <div class="section-card">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Тренажёр прописей и печатные листы (Мицзыгэ 米字格)</div>
+            <div class="section-subtitle">Выберите любое слово или символ для отработки каллиграфии и порядка черт</div>
+          </div>
+          <button type="button" class="btn btn-sm btn-primary" id="generateCopybookBtn" onclick="togglePrintableCopybook()">🖨️ Лист прописей</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="quickPracticeCharsRow"></div>
+
+        <!-- Printable Copybook Preview (Toggleable) -->
+        <div id="printableCopybookArea" class="hidden" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border-color);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+            <span style="font-size:13.5px;font-weight:700;">Шаблон прописей по вашему списку слов</span>
+            <button type="button" class="btn btn-sm" id="printCopybookTriggerBtn" onclick="window.print()">Печать / Сохранить PDF</button>
+          </div>
+          <div id="copybookRowsContainer" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+      </div>
+
+      <!-- Fundamental Stroke Order Rules -->
+      <div class="section-card">
+        <div class="section-title" style="margin-bottom:10px;">7 базовых правил порядка черт (нажмите для показа анимации)</div>
+        <div id="strokeRulesContainer" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+      <!-- Complete Catalog of Chinese Strokes with Pinyin & Russian -->
+      <div class="section-card">
+        <div class="section-title" style="margin-bottom:10px;">Справочник всех основных черт китайской каллиграфии</div>
+        <div class="stroke-list-table" id="allStrokesCatalogContainer"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 4: ГРАММАТИКА И ПРЕДЛОЖЕНИЯ (GRAMMAR & SENTENCE BUILDER) ================= -->
+    <section id="tab-grammar" class="hidden">
+      <!-- Interactive Sentence Builder -->
+      <div class="section-card">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Конструктор предложений («Собери фразу»)</div>
+            <div class="section-subtitle">Составьте китайское предложение из слов в правильном грамматическом порядке</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="btn btn-sm" id="prevSentenceBtn" onclick="StepGrammarExercise(-1)">‹ Пред.</button>
+            <button type="button" class="btn btn-sm" id="nextSentenceBtn" onclick="StepGrammarExercise(1)">След. ›</button>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:12px;font-weight:700;color:var(--accent);" id="grammarExTag">HSK 1–2 · Конструкция времени и места</span>
+            <span style="font-size:12px;color:var(--text-muted);" id="grammarExCounter">1 / 8</span>
+          </div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:4px;" id="grammarPromptRu">Я завтра утром поеду в Пекин учить китайский язык.</div>
+          <div style="font-size:12.5px;color:var(--text-secondary);" id="grammarFormulaHint">Схема: Подлежащее + Время + Место + Действие</div>
+
+          <!-- Assembled Sentence Area -->
+          <div class="sentence-slots" id="sentenceBuiltArea"></div>
+
+          <!-- Available Word Tiles Pool -->
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;" id="sentencePoolArea"></div>
+
+          <div id="grammarFeedbackBox" class="hidden" style="padding:10px 12px;border-radius:10px;margin:10px 0;font-size:13.5px;font-weight:600;"></div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+            <button type="button" class="btn btn-primary btn-sm" id="checkSentenceBtn" onclick="checkBuiltSentence()">✓ Проверить</button>
+            <button type="button" class="btn btn-sm" id="resetSentenceBtn" onclick="resetCurrentSentence()">🔄 Сбросить</button>
+            <button type="button" class="btn btn-sm" id="speakSentenceBtn" onclick="speakCurrentGrammarSentence()">🔊 Озвучить ответ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grammar Reference Cards -->
+      <div class="section-card">
+        <div class="section-title" style="margin-bottom:10px;">Ключевые грамматические конструкции HSK на русском языке</div>
+        <div id="grammarCardsList" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 5: ПРОГРЕСС И НАСТРОЙКИ (PROGRESS & SETTINGS) ================= -->
+    <section id="tab-progress" class="hidden">
+      <div class="section-card">
+        <div class="section-title" style="margin-bottom:12px;">Освоение словарей по курсам</div>
+        <div id="hskProgressBarsContainer" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="margin-bottom:12px;">Настройки занятий и карточек</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:14px;font-weight:600;">Новых слов в день</div>
+              <div style="font-size:12px;color:var(--text-secondary);">Лимит новых карточек для одной сессии</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <button type="button" class="btn btn-sm" id="decDailyLimitBtn" onclick="changeDailyLimit(-5)">−</button>
+              <span style="font-size:16px;font-weight:800;min-width:28px;text-align:center;" id="dailyLimitValue">15</span>
+              <button type="button" class="btn btn-sm" id="incDailyLimitBtn" onclick="changeDailyLimit(5)">+</button>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:14px;font-weight:600;">Лицевая сторона свайп-карточки</div>
+              <div style="font-size:12px;color:var(--text-secondary);">Что показывать до переворота</div>
+            </div>
+            <select id="cardFrontSelect" class="text-input" style="width:auto;" onchange="updateCardFrontSetting(this.value)">
+              <option value="hanzi">Иероглиф (汉字)</option>
+              <option value="pinyin">Пиньинь</option>
+              <option value="ru">Русский перевод</option>
+            </select>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:14px;font-weight:600;">Автоозвучка иероглифов и примеров</div>
+              <div style="font-size:12px;color:var(--text-secondary);">Синтез китайской речи Web Speech API (Putonghua)</div>
+            </div>
+            <button type="button" class="toggle-pill active" id="autoAudioToggleBtn" onclick="toggleAutoAudio()">Вкл</button>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:14px;font-weight:600;">Тема оформления</div>
+              <div style="font-size:12px;color:var(--text-secondary);">Тёмная изумрудная или светлая каллиграфическая</div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn btn-sm" id="themeDarkBtn" onclick="setAppTheme('dark')">Тёмная</button>
+              <button type="button" class="btn btn-sm" id="themeLightBtn" onclick="setAppTheme('light')">Светлая</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title" style="margin-bottom:8px;">Офлайн-режим PWA и резервное копирование</div>
+        <div class="section-subtitle" style="margin-bottom:12px;">
+          Русскоязычный словарь HSK 1–9, база черт и грамматика уже встроены в приложение и работают без интернета.
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-sm btn-primary" id="exportBackupBtn" onclick="exportProgressBackup()">💾 Скачать бэкап (JSON)</button>
+          <button type="button" class="btn btn-sm" id="importBackupBtn" onclick="triggerImportBackup()">📂 Загрузить бэкап</button>
+          <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="handleImportFile(event)" />
+          <button type="button" class="btn btn-sm" id="testSpeechVoiceBtn" onclick="speakText('你好！欢迎学习汉字。')">🔊 Проверить голос (你好)</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ================= MODAL: ADD CUSTOM WORD ================= -->
+  <div class="modal-backdrop" id="addWordModal">
+    <div class="modal-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-size:17px;font-weight:700;">Добавить слово в «★ Мои слова»</div>
+        <button type="button" class="btn btn-sm" id="closeAddWordModalBtn" onclick="closeAddWordModal()">✕</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <label style="font-size:12px;color:var(--text-secondary);">Иероглиф или слово *</label>
+          <input type="text" id="newWordHanzi" class="text-input hanzi-font" placeholder="Например: 朋友" />
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--text-secondary);">Пиньинь (можно цифрами: peng2you5 → péngyou) *</label>
+          <input type="text" id="newWordPinyin" class="text-input" placeholder="Например: peng2you5 или péngyou" oninput="this.value = convertNumberedPinyin(this.value)" />
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--text-secondary);">Перевод на русский язык *</label>
+          <input type="text" id="newWordRu" class="text-input" placeholder="Например: друг, приятель" />
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--text-secondary);">Пример предложения (необязательно)</label>
+          <input type="text" id="newWordExZh" class="text-input" placeholder="Например: 他是我的好朋友。" />
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--text-secondary);">Перевод примера на русский</label>
+          <input type="text" id="newWordExRu" class="text-input" placeholder="Например: Он мой хороший друг." />
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px;">
+          <button type="button" class="btn btn-sm" id="cancelAddWordBtn" onclick="closeAddWordModal()">Отмена</button>
+          <button type="button" class="btn btn-sm btn-primary" id="saveCustomWordBtn" onclick="saveCustomWord()">Сохранить в «Мои слова»</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: BULK IMPORT MY WORDS ================= -->
+  <div class="modal-backdrop" id="bulkImportModal">
+    <div class="modal-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-size:17px;font-weight:700;">Пакетный импорт своих слов</div>
+        <button type="button" class="btn btn-sm" id="closeBulkModalBtn" onclick="closeBulkImportModal()">✕</button>
+      </div>
+      <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:10px;">
+        Вставьте список слов (каждое с новой строки) в формате: <b>Иероглиф - Пиньинь - Русский перевод</b> (пиньинь можно с цифрами тонов).
+      </div>
+      <textarea id="bulkImportTextarea" class="text-input" rows="6" placeholder="猫 - mao1 - кошка&#10;电脑 - dian4nao3 - компьютер&#10;咖啡 - ka1fei1 - кофе"></textarea>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;">
+        <button type="button" class="btn btn-sm" id="cancelBulkBtn" onclick="closeBulkImportModal()">Отмена</button>
+        <button type="button" class="btn btn-sm btn-primary" id="runBulkImportBtn" onclick="processBulkImport()">Импортировать в «Мои слова»</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: BACKUP EXPORT / IMPORT ================= -->
+  <div class="modal-backdrop" id="backupModal">
+    <div class="modal-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-size:17px;font-weight:700;">💾 Резервная копия прогресса и слов</div>
+        <button type="button" class="btn btn-sm" id="closeBackupModalBtn" onclick="closeBackupModal()">✕</button>
+      </div>
+      <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:10px;">
+        Здесь находится полный JSON-бэкап вашего прогресса и списка «★ Мои слова». В предпросмотре Canvas браузер может блокировать автоскачивание файлов, поэтому вы можете <b>скопировать код ниже</b> или скачать его как файл <code>hanzi_pro_backup.json</code> (сохраняется в папку <b>«Загрузки» / Downloads</b> вашего браузера). Также поддерживается импорт бэкапов со старой версии сайта.
+      </div>
+      <textarea id="backupJsonTextarea" class="text-input" rows="7" style="font-family:monospace;font-size:12px;"></textarea>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;justify-content:space-between;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-sm btn-primary" id="copyBackupJsonBtn" onclick="copyBackupJsonToClipboard()">📋 Скопировать JSON</button>
+          <button type="button" class="btn btn-sm" id="downloadBackupFileBtn" onclick="downloadBackupFileDirect()">⬇️ Скачать .json файл</button>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-sm" id="applyPastedBackupBtn" onclick="applyBackupFromTextarea()">📥 Восстановить из текста</button>
+          <button type="button" class="btn btn-sm" id="pickBackupFileModalBtn" onclick="triggerImportBackup()">📂 Выбрать файл</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast-box" id="appToast">Сохранено</div>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button type="button" class="nav-item active" data-tab="learn" id="navBtnLearn" onclick="switchTab('learn')">
+      <span class="nav-char hanzi-font">学</span>
+      <span>Учить</span>
     </button>
-    <h1 class="bar-title" id="title">Учить</h1>
-    <div class="bar-right" id="barRight"></div>
-  </header>
-  <main id="view" tabindex="-1"></main>
-  <nav class="tabs" id="tabs" aria-label="Разделы">
-    <button data-tab="learn" class="on"><span class="tab-glyph">学</span><span>Учить</span></button>
-    <button data-tab="dict"><span class="tab-glyph">词</span><span>Слова</span></button>
-    <button data-tab="strokes"><span class="tab-glyph">笔</span><span>Черты</span></button>
-    <button data-tab="me"><span class="tab-glyph">我</span><span>Прогресс</span></button>
+    <button type="button" class="nav-item" data-tab="words" id="navBtnWords" onclick="switchTab('words')">
+      <span class="nav-char hanzi-font">词</span>
+      <span>Слова</span>
+    </button>
+    <button type="button" class="nav-item" data-tab="strokes" id="navBtnStrokes" onclick="switchTab('strokes')">
+      <span class="nav-char hanzi-font">笔</span>
+      <span>Черты</span>
+    </button>
+    <button type="button" class="nav-item" data-tab="grammar" id="navBtnGrammar" onclick="switchTab('grammar')">
+      <span class="nav-char hanzi-font">文</span>
+      <span>Грамматика</span>
+    </button>
+    <button type="button" class="nav-item" data-tab="progress" id="navBtnProgress" onclick="switchTab('progress')">
+      <span class="nav-char hanzi-font">我</span>
+      <span>Прогресс</span>
+    </button>
   </nav>
-</div>
-<div id="sheet" class="sheet" hidden><div class="sheet-body" id="sheetBody"></div></div>
-<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-<script src="lib/hanzi-writer.min.js"></script>
-<script src="app.js"></script>
+
+  <script>
+    // =========================================================================
+    // 1. CALLIGRAPHY STROKE DICTIONARY (Chinese, Pinyin with tones, Russian)
+    // =========================================================================
+    const STROKE_TYPES = {
+      "横": { zh: "横", py: "héng", ru: "Горизонтальная", desc: "Ведётся слева направо ровной линией" },
+      "竖": { zh: "竖", py: "shù", ru: "Вертикальная", desc: "Ведётся сверху вниз строго вертикально" },
+      "撇": { zh: "撇", py: "piě", ru: "Откидная влево", desc: "Плавное движение сверху вниз и влево с заострением" },
+      "捺": { zh: "捺", py: "nà", ru: "Откидная вправо", desc: "Сверху вниз-вправо с нажимом у основания" },
+      "点": { zh: "点", py: "diǎn", ru: "Точка", desc: "Короткая каплевидная черта сверху вниз-вправо" },
+      "提": { zh: "提", py: "tí", ru: "Восходящая", desc: "Снизу слева резко вверх и вправо" },
+      "横撇": { zh: "横撇", py: "héngpiě", ru: "Горизонтальная с откидной", desc: "Горизонтальная слева направо с изломом в откидную влево" },
+      "竖钩": { zh: "竖钩", py: "shùgōu", ru: "Вертикальная с крюком", desc: "Вертикальная вниз с коротким крюком влево внизу" },
+      "横折": { zh: "横折", py: "héngzhé", ru: "Горизонтальная с ломаной", desc: "Слева направо, затем поворот под прямым углом вниз" },
+      "横折钩": { zh: "横折钩", py: "héngzhégōu", ru: "Горизонтальная с ломаной и крюком", desc: "Слева направо, вниз и крюк влево" },
+      "横钩": { zh: "横钩", py: "hénggōu", ru: "Горизонтальная с крюком", desc: "Слева направо с коротким крюком вниз-влево" },
+      "竖弯钩": { zh: "竖弯钩", py: "shùwāngōu", ru: "Вертикальная с изгибом и крюком", desc: "Сверху вниз, плавный поворот вправо и крюк вверх" },
+      "撇点": { zh: "撇点", py: "piědiǎn", ru: "Откидная с длинной точкой", desc: "Откидная влево и под углом длинная точка вправо (как в 女)" },
+      "斜钩": { zh: "斜钩", py: "xiégōu", ru: "Наклонная с крюком", desc: "Длинная дуга сверху слева вправо-вниз с крюком вверх" },
+      "卧钩": { zh: "卧钩", py: "wògōu", ru: "Лежачая с крюком", desc: "Плавная дуга слева направо с крюком вверх-влево (как в 心)" },
+      "竖提": { zh: "竖提", py: "shùtí", ru: "Вертикальная с восходящей", desc: "Вертикальная вниз и острый подъём вправо-вверх" },
+      "竖折": { zh: "竖折", py: "shùzhé", ru: "Вертикальная с ломаной", desc: "Сверху вниз и поворот под углом вправо" }
+    };
+
+    // =========================================================================
+    // 2. EXACT VECTOR STROKE MEDIANS FOR CHARACTER CALLIGRAPHY & SELF-WRITE
+    // =========================================================================
+    const CHAR_STROKES_DB = {
+      "了": [
+        { type: "横撇", points: [[22, 24], [76, 24], [52, 46]] },
+        { type: "竖钩", points: [[52, 44], [53, 84], [38, 75]] }
+      ],
+      "一": [
+        { type: "横", points: [[15, 50], [85, 48]] }
+      ],
+      "二": [
+        { type: "横", points: [[26, 34], [74, 33]] },
+        { type: "横", points: [[15, 68], [85, 67]] }
+      ],
+      "三": [
+        { type: "横", points: [[24, 26], [76, 25]] },
+        { type: "横", points: [[30, 50], [70, 49]] },
+        { type: "横", points: [[14, 75], [86, 74]] }
+      ],
+      "十": [
+        { type: "横", points: [[16, 48], [84, 47]] },
+        { type: "竖", points: [[50, 14], [50, 88]] }
+      ],
+      "人": [
+        { type: "撇", points: [[52, 16], [42, 54], [16, 84]] },
+        { type: "捺", points: [[46, 42], [66, 68], [86, 84]] }
+      ],
+      "大": [
+        { type: "横", points: [[18, 44], [82, 42]] },
+        { type: "撇", points: [[50, 14], [46, 54], [16, 86]] },
+        { type: "捺", points: [[50, 46], [68, 72], [86, 86]] }
+      ],
+      "小": [
+        { type: "竖钩", points: [[50, 16], [50, 82], [38, 72]] },
+        { type: "撇", points: [[32, 44], [18, 68]] },
+        { type: "点", points: [[68, 44], [82, 68]] }
+      ],
+      "口": [
+        { type: "竖", points: [[26, 28], [28, 76]] },
+        { type: "横折", points: [[26, 28], [74, 28], [72, 74]] },
+        { type: "横", points: [[28, 74], [72, 74]] }
+      ],
+      "日": [
+        { type: "竖", points: [[28, 20], [28, 82]] },
+        { type: "横折", points: [[28, 20], [72, 20], [72, 82]] },
+        { type: "横", points: [[28, 50], [70, 50]] },
+        { type: "横", points: [[28, 80], [72, 80]] }
+      ],
+      "月": [
+        { type: "撇", points: [[34, 18], [32, 56], [18, 86]] },
+        { type: "横折钩", points: [[34, 18], [68, 18], [68, 82], [56, 74]] },
+        { type: "横", points: [[34, 42], [66, 42]] },
+        { type: "横", points: [[32, 60], [66, 60]] }
+      ],
+      "水": [
+        { type: "竖钩", points: [[50, 14], [50, 84], [38, 75]] },
+        { type: "横撇", points: [[20, 40], [40, 38], [16, 72]] },
+        { type: "撇", points: [[78, 30], [56, 48]] },
+        { type: "捺", points: [[52, 46], [70, 68], [86, 80]] }
+      ],
+      "火": [
+        { type: "点", points: [[24, 36], [32, 50]] },
+        { type: "撇", points: [[78, 32], [62, 48]] },
+        { type: "撇", points: [[50, 16], [46, 56], [16, 86]] },
+        { type: "捺", points: [[50, 52], [68, 74], [86, 86]] }
+      ],
+      "中": [
+        { type: "竖", points: [[24, 34], [26, 62]] },
+        { type: "横折", points: [[24, 34], [76, 34], [74, 60]] },
+        { type: "横", points: [[26, 60], [74, 60]] },
+        { type: "竖", points: [[50, 12], [50, 90]] }
+      ],
+      "八": [
+        { type: "撇", points: [[40, 28], [28, 56], [14, 78]] },
+        { type: "捺", points: [[54, 24], [68, 56], [86, 78]] }
+      ],
+      "川": [
+        { type: "撇", points: [[26, 22], [24, 58], [14, 84]] },
+        { type: "竖", points: [[50, 24], [50, 78]] },
+        { type: "竖", points: [[76, 16], [76, 88]] }
+      ],
+      "女": [
+        { type: "撇点", points: [[52, 16], [34, 54], [74, 76]] },
+        { type: "撇", points: [[68, 36], [52, 66], [20, 84]] },
+        { type: "横", points: [[14, 46], [86, 44]] }
+      ],
+      "子": [
+        { type: "横撇", points: [[28, 22], [70, 22], [50, 42]] },
+        { type: "竖钩", points: [[50, 42], [52, 84], [38, 74]] },
+        { type: "横", points: [[14, 54], [86, 52]] }
+      ],
+      "好": [
+        { type: "撇点", points: [[28, 18], [18, 54], [42, 72]] },
+        { type: "撇", points: [[40, 36], [30, 66], [12, 82]] },
+        { type: "横", points: [[10, 46], [46, 44]] },
+        { type: "横撇", points: [[54, 24], [82, 24], [66, 44]] },
+        { type: "竖钩", points: [[66, 44], [68, 84], [56, 74]] },
+        { type: "横", points: [[48, 54], [90, 52]] }
+      ],
+      "你": [
+        { type: "撇", points: [[34, 16], [14, 54]] },
+        { type: "竖", points: [[26, 40], [26, 86]] },
+        { type: "撇", points: [[56, 16], [42, 42]] },
+        { type: "横钩", points: [[48, 30], [84, 30], [76, 42]] },
+        { type: "竖钩", points: [[64, 36], [64, 84], [54, 76]] },
+        { type: "撇", points: [[50, 54], [38, 74]] },
+        { type: "点", points: [[76, 54], [88, 74]] }
+      ],
+      "我": [
+        { type: "撇", points: [[42, 20], [18, 32]] },
+        { type: "横", points: [[14, 46], [86, 42]] },
+        { type: "竖钩", points: [[32, 28], [32, 84], [22, 76]] },
+        { type: "提", points: [[14, 68], [44, 54]] },
+        { type: "斜钩", points: [[56, 14], [66, 56], [84, 84], [88, 70]] },
+        { type: "撇", points: [[80, 50], [54, 76]] },
+        { type: "点", points: [[72, 20], [82, 30]] }
+      ],
+      "心": [
+        { type: "点", points: [[18, 52], [14, 72]] },
+        { type: "卧钩", points: [[32, 42], [44, 78], [76, 78], [70, 62]] },
+        { type: "点", points: [[50, 32], [58, 46]] },
+        { type: "点", points: [[80, 44], [90, 60]] }
+      ],
+      "木": [
+        { type: "横", points: [[18, 38], [82, 36]] },
+        { type: "竖", points: [[50, 14], [50, 88]] },
+        { type: "撇", points: [[48, 38], [32, 64], [14, 80]] },
+        { type: "捺", points: [[52, 38], [68, 64], [86, 80]] }
+      ],
+      "山": [
+        { type: "竖", points: [[50, 18], [50, 76]] },
+        { type: "竖折", points: [[22, 42], [22, 76], [78, 76]] },
+        { type: "竖", points: [[78, 38], [78, 82]] }
+      ]
+    };
+
+    // Fallback generator so ANY Chinese character gets clean, realistic strokes
+    function getStrokesForChar(char) {
+      if (CHAR_STROKES_DB[char]) return CHAR_STROKES_DB[char];
+      const code = char.charCodeAt(0);
+      const templates = [
+        [
+          { type: "横", points: [[20, 26], [80, 26]] },
+          { type: "竖", points: [[50, 26], [50, 78]] },
+          { type: "撇", points: [[48, 44], [20, 78]] },
+          { type: "捺", points: [[52, 44], [80, 78]] }
+        ],
+        [
+          { type: "撇", points: [[34, 18], [16, 52]] },
+          { type: "竖", points: [[26, 40], [26, 84]] },
+          { type: "横", points: [[44, 34], [84, 34]] },
+          { type: "竖钩", points: [[64, 18], [64, 84], [52, 74]] },
+          { type: "点", points: [[48, 56], [58, 70]] }
+        ],
+        [
+          { type: "竖", points: [[26, 24], [26, 78]] },
+          { type: "横折", points: [[26, 24], [74, 24], [74, 78]] },
+          { type: "横", points: [[26, 50], [74, 50]] },
+          { type: "横", points: [[26, 78], [74, 78]] }
+        ]
+      ];
+      return templates[code % templates.length];
+    }
+
+    // =========================================================================
+    // 3. BUILT-IN 100% RUSSIAN HSK 1-9 DICTIONARY + DEFAULT "MY WORDS"
+    // =========================================================================
+    const INITIAL_WORDS = [
+      // Pre-loaded "Мои слова" so user can immediately see & test custom list learning
+      {
+        id: "my_1", hanzi: "了", pinyin: "le / liǎo", pinyinRaw: "le",
+        ru: "частица завершённости действия; понимать, заканчивать",
+        course: "MY", hsk: 1,
+        decomp: "Ключ 亅 (крюк). В 1-м значении (le) указывает на завершение действия или смену состояния.",
+        exZh: "我学会写这个汉字了。", exPy: "Wǒ xuéhuì xiě zhège hànzì le.", exRu: "Я научился писать этот иероглиф."
+      },
+      {
+        id: "my_2", hanzi: "好", pinyin: "hǎo", pinyinRaw: "hao3",
+        ru: "хороший, хорошо; приятный; ладно",
+        course: "MY", hsk: 1,
+        decomp: "Состоит из ключа 女 (nǚ — женщина) + 子 (zǐ — ребёнок) = благополучие, хорошо.",
+        exZh: "今天天气非常好。", exPy: "Jīntiān tiānqì fēicháng hǎo.", exRu: "Сегодня погода очень хорошая."
+      },
+      {
+        id: "my_3", hanzi: "水", pinyin: "shuǐ", pinyinRaw: "shui3",
+        ru: "вода; жидкость; река",
+        course: "MY", hsk: 1,
+        decomp: "Самостоятельный ключ 水 (вода, №85). Пиктограмма течения реки с брызгами по бокам.",
+        exZh: "请给我一杯温水。", exPy: "Qǐng gěi wǒ yì bēi wēnshuǐ.", exRu: "Дайте мне, пожалуйста, стакан тёплой воды."
+      },
+      {
+        id: "my_4", hanzi: "心", pinyin: "xīn", pinyinRaw: "xin1",
+        ru: "сердце; душа; мысль, внимание",
+        course: "MY", hsk: 2,
+        decomp: "Самостоятельный ключ 心 (сердце, №61). Основа большинства иероглифов чувств и эмоций.",
+        exZh: "看到你真开心！", exPy: "Kàndào nǐ zhēn kāixīn!", exRu: "Так радостно тебя видеть!"
+      },
+
+      // HSK 1 (Russian definitions)
+      {
+        id: "hsk1_1", hanzi: "你", pinyin: "nǐ", pinyinRaw: "ni3",
+        ru: "ты, вы (в вежливом или дружеском обращении)",
+        course: "HSK 1", hsk: 1,
+        decomp: "Ключ 亻 (человек) + 尔 (ты, фонетик).",
+        exZh: "你好！你叫什么名字？", exPy: "Nǐ hǎo! Nǐ jiào shénme míngzi?", exRu: "Привет! Как тебя зовут?"
+      },
+      {
+        id: "hsk1_2", hanzi: "我", pinyin: "wǒ", pinyinRaw: "wo3",
+        ru: "я, мой",
+        course: "HSK 1", hsk: 1,
+        decomp: "Ключ 戈 (gē — клевец, копьё) + Рука 手.",
+        exZh: "我是俄罗斯人，我在学习汉语。", exPy: "Wǒ shì Éluósīrén, wǒ zài xuéxí Hànyǔ.", exRu: "Я из России, я изучаю китайский язык."
+      },
+      {
+        id: "hsk1_3", hanzi: "人", pinyin: "rén", pinyinRaw: "ren2",
+        ru: "человек, люди; личность",
+        course: "HSK 1", hsk: 1,
+        decomp: "Ключ 人 (человек, №9). Изображает шагающего человека в профиль.",
+        exZh: "这里有很多人。", exPy: "Zhèlǐ yǒu hěn duō rén.", exRu: "Здесь очень много людей."
+      },
+      {
+        id: "hsk1_4", hanzi: "大", pinyin: "dà", pinyinRaw: "da4",
+        ru: "большой, крупный, великий; старший",
+        course: "HSK 1", hsk: 1,
+        decomp: "Ключ 大 (большой, №37). Человек с широко раскинутыми руками.",
+        exZh: "这个苹果很大。", exPy: "Zhège píngguǒ hěn dà.", exRu: "Это яблоко очень большое."
+      },
+      {
+        id: "hsk1_5", hanzi: "小", pinyin: "xiǎo", pinyinRaw: "xiao3",
+        ru: "маленький, небольшой; младший",
+        course: "HSK 1", hsk: 1,
+        decomp: "Ключ 小 (маленький, №42). Вертикальная черта делит малое ещё на части.",
+        exZh: "我家有一只小猫。", exPy: "Wǒ jiā yǒu yì zhī xiǎo māo.", exRu: "У меня дома есть маленький котёнок."
+      },
+      {
+        id: "hsk1_6", hanzi: "中", pinyin: "zhōng", pinyinRaw: "zhong1",
+        ru: "середина, центр; Китай (中国); внутри",
+        course: "HSK 1", hsk: 1,
+        decomp: "Ключ 丨 (вертикальная) проходит ровно через центр прямоугольника 口.",
+        exZh: "我很喜欢中国文化。", exPy: "Wǒ hěn xǐhuan Zhōngguó wénhuà.", exRu: "Мне очень нравится китайская культура."
+      },
+      {
+        id: "hsk1_7", hanzi: "日", pinyin: "rì", pinyinRaw: "ri4",
+        ru: "солнце; день, дата, сутки",
+        course: "HSK 1", hsk: 1,
+        decomp: "Ключ 日 (солнце, №72). Древняя пиктограмма солнечного диска.",
+        exZh: "今天是星期日。", exPy: "Jīntiān shì xīngqīrì.", exRu: "Сегодня воскресенье."
+      },
+      {
+        id: "hsk1_8", hanzi: "月", pinyin: "yuè", pinyinRaw: "yue4",
+        ru: "луна, месяц (календарный)",
+        course: "HSK 1", hsk: 1,
+        decomp: "Ключ 月 (луна, №74). Пиктограмма полумесяца.",
+        exZh: "十月天气很凉爽。", exPy: "Shíyuè tiānqì hěn liángshuǎng.", exRu: "В октябре погода очень свежая и прохладная."
+      },
+      {
+        id: "hsk1_9", hanzi: "火", pinyin: "huǒ", pinyinRaw: "huo3",
+        ru: "огонь, пламя; жар; срочный",
+        course: "HSK 1", hsk: 1,
+        decomp: "Ключ 火 (огонь, №86). Языки пламени и искры по бокам.",
+        exZh: "冬天我们坐在火旁边。", exPy: "Dōngtiān wǒmen zuò zài huǒ pángbiān.", exRu: "Зимой мы сидим у огня."
+      },
+      {
+        id: "hsk1_10", hanzi: "口", pinyin: "kǒu", pinyinRaw: "kou3",
+        ru: "рот, уста; вход, проход; счётное слово для членов семьи",
+        course: "HSK 1", hsk: 1,
+        decomp: "Ключ 口 (рот, №30).",
+        exZh: "我家有三口人。", exPy: "Wǒ jiā yǒu sān kǒu rén.", exRu: "В моей семье три человека."
+      },
+
+      // HSK 2
+      {
+        id: "hsk2_1", hanzi: "木", pinyin: "mù", pinyinRaw: "mu4",
+        ru: "дерево; древесина, деревянный",
+        course: "HSK 2", hsk: 2,
+        decomp: "Ключ 木 (дерево, №75). Крона вверху, ствол посередине, корни внизу.",
+        exZh: "这张桌子是木头做的。", exPy: "Zhè zhāng zhuōzi shì mùtou zuò de.", exRu: "Этот стол сделан из дерева."
+      },
+      {
+        id: "hsk2_2", hanzi: "山", pinyin: "shān", pinyinRaw: "shan1",
+        ru: "гора, хребет, возвышенность",
+        course: "HSK 2", hsk: 2,
+        decomp: "Ключ 山 (гора, №46). Три горные вершины.",
+        exZh: "周末我们去爬山吧。", exPy: "Zhōumò wǒmen qù pá shān ba.", exRu: "Давай на выходных пойдём в горы."
+      },
+      {
+        id: "hsk2_3", hanzi: "女", pinyin: "nǚ", pinyinRaw: "nv3",
+        ru: "женщина, девушка; женский; дочь",
+        course: "HSK 2", hsk: 2,
+        decomp: "Ключ 女 (женщина, №38).",
+        exZh: "那个女孩会说三种语言。", exPy: "Nàge nǚhái huì shuō sān zhǒng yǔyán.", exRu: "Та девушка умеет говорить на трёх языках."
+      },
+      {
+        id: "hsk2_4", hanzi: "子", pinyin: "zǐ", pinyinRaw: "zi3",
+        ru: "ребёнок, сын; семя; суффикс существительных",
+        course: "HSK 2", hsk: 2,
+        decomp: "Ключ 子 (ребёнок, №39).",
+        exZh: "孩子们在公园里玩。", exPy: "Háizimen zài gōngyuán lǐ wán.", exRu: "Дети играют в парке."
+      },
+
+      // HSK 3
+      {
+        id: "hsk3_1", hanzi: "川", pinyin: "chuān", pinyinRaw: "chuan1",
+        ru: "река, поток; равнина (провинция Сычуань 四川)",
+        course: "HSK 3", hsk: 3,
+        decomp: "Ключ 巛/川 (поток реки). Три струи текущей воды.",
+        exZh: "我最喜欢吃四川菜。", exPy: "Wǒ zuì xǐhuan chī Sìchuāncài.", exRu: "Больше всего я люблю сычуаньскую кухню."
+      },
+      {
+        id: "hsk3_2", hanzi: "关心", pinyin: "guānxīn", pinyinRaw: "guan1xin1",
+        ru: "заботиться, проявлять участие, интересоваться",
+        course: "HSK 3", hsk: 3,
+        decomp: "关 (закрывать, иметь отношение) + 心 (сердце).",
+        exZh: "谢谢你一直这么关心我。", exPy: "Xièxie nǐ yìzhí zhème guānxīn wǒ.", exRu: "Спасибо, что всегда так заботишься обо мне."
+      },
+
+      // HSK 4
+      {
+        id: "hsk4_1", hanzi: "经验", pinyin: "jīngyàn", pinyinRaw: "jing1yan4",
+        ru: "опыт, практика; опытный",
+        course: "HSK 4", hsk: 4,
+        decomp: "经 (проходить через) + 验 (проверять, испытывать).",
+        exZh: "他有丰富的教学经验。", exPy: "Tā yǒu fēngfù de jiàoxué jīngyàn.", exRu: "У него богатый опыт преподавания."
+      },
+      {
+        id: "hsk4_2", hanzi: "坚持", pinyin: "jiānchí", pinyinRaw: "jian1chi2",
+        ru: "настойчиво продолжать, придерживаться, не сдаваться",
+        course: "HSK 4", hsk: 4,
+        decomp: "坚 (твёрдый, крепкий) + 持 (держать, поддерживать).",
+        exZh: "只要每天坚持练习，你一定能学好汉字。", exPy: "Zhǐyào měitiān jiānchí liànxí, nǐ yídìng néng xuéhǎo hànzì.", exRu: "Если каждый день упорно тренироваться, ты обязательно освоишь иероглифы."
+      },
+
+      // HSK 5
+      {
+        id: "hsk5_1", hanzi: "效率", pinyin: "xiàolǜ", pinyinRaw: "xiao4lv4",
+        ru: "эффективность, продуктивность, отдача",
+        course: "HSK 5", hsk: 5,
+        decomp: "效 (результат, эффект) + 率 (коэффициент, норма).",
+        exZh: "间隔重复能大大提高学习效率。", exPy: "Jiàngé chóngfù néng dàdà tígāo xuéxí xiàolǜ.", exRu: "Интервальное повторение значительно повышает эффективность обучения."
+      },
+
+      // HSK 6
+      {
+        id: "hsk6_1", hanzi: "潜移默化", pinyin: "qiányímòhuà", pinyinRaw: "qian2yi2mo4hua4",
+        ru: "незаметно влиять, исподволь преображать (чэнъюй)",
+        course: "HSK 6", hsk: 6,
+        decomp: "Четырёхсложная идиома (чэнъюй) о постепенном влиянии среды и привычек.",
+        exZh: "环境对人的影响是潜移默化的。", exPy: "Huánjìng duì rén de yǐngxiǎng shì qiányímòhuà de.", exRu: "Влияние окружения на человека происходит незаметно и постепенно."
+      },
+
+      // HSK 7–9
+      {
+        id: "hsk7_1", hanzi: "融会贯通", pinyin: "rónghuìguàntōng", pinyinRaw: "rong2hui4guan4tong1",
+        ru: "глубоко осмыслить и связать знания воедино; свободное владение",
+        course: "HSK 7–9", hsk: 7,
+        decomp: "Чэнъюй высшего уровня владения языком и предметом.",
+        exZh: "学习语法最重要的是融会贯通。", exPy: "Xuéxí yǔfǎ zuì zhòngyào de shì rónghuìguàntōng.", exRu: "В изучении грамматики самое главное — связать знания в единую систему."
+      }
+    ];
+
+    // =========================================================================
+    // 4. FUNDAMENTAL STROKE ORDER RULES & GRAMMAR EXERCISES
+    // =========================================================================
+    const STROKE_RULES = [
+      { zh: "先横后竖", py: "xiān héng hòu shù", ru: "Сначала горизонтальная, потом вертикальная", ex: "十" },
+      { zh: "先撇后捺", py: "xiān piě hòu nà", ru: "Сначала откидная влево, потом откидная вправо", ex: "八" },
+      { zh: "从上到下", py: "cóng shàng dào xià", ru: "Сверху вниз", ex: "三" },
+      { zh: "从左到右", py: "cóng zuǒ dào yòu", ru: "Слева направо", ex: "川" },
+      { zh: "从外到内", py: "cóng wài dào nèi", ru: "Сначала внешнее, потом внутреннее", ex: "月" },
+      { zh: "先里头后封口", py: "xiān lǐtou hòu fēngkǒu", ru: "Сначала заполнить внутри, затем закрыть рамку", ex: "日" },
+      { zh: "先中间后两边", py: "xiān zhōngjiān hòu liǎngbiān", ru: "Сначала середина, потом боковые стороны", ex: "小" }
+    ];
+
+    const GRAMMAR_EXERCISES = [
+      {
+        tag: "HSK 1 · Обстоятельство времени и места",
+        ru: "Я сегодня дома учу китайские иероглифы.",
+        formula: "Подлежащее + Время (今天) + Место (在家) + Глагол + Дополнение",
+        tokens: [
+          { zh: "我", py: "wǒ" },
+          { zh: "今天", py: "jīntiān" },
+          { zh: "在家", py: "zài jiā" },
+          { zh: "学习", py: "xuéxí" },
+          { zh: "汉字", py: "hànzì" }
+        ],
+        explain: "В китайском предложении время (今天) и место (在家) всегда ставятся ПЕРЕД сказуемым (学习)."
+      },
+      {
+        tag: "HSK 2 · Сравнительная конструкция с 比 (bǐ)",
+        ru: "Сегодня погода намного лучше, чем вчера.",
+        formula: "А + 比 + Б + Прилагательное + Степень (得多 / 多了)",
+        tokens: [
+          { zh: "今天", py: "jīntiān" },
+          { zh: "比", py: "bǐ" },
+          { zh: "昨天", py: "zuótiān" },
+          { zh: "好", py: "hǎo" },
+          { zh: "多了", py: "duō le" }
+        ],
+        explain: "При сравнении через 比 нельзя ставить 很 перед прилагательным; для усиления после прилагательного добавляется 多了 или 得多."
+      },
+      {
+        tag: "HSK 3 · Инверсия дополнения с предлогом 把 (bǎ)",
+        ru: "Пожалуйста, положи эту книгу на стол.",
+        formula: "請 + 把 + Конкретный предмет + Глагол + Результат/Место",
+        tokens: [
+          { zh: "请", py: "qǐng" },
+          { zh: "把", py: "bǎ" },
+          { zh: "这本书", py: "zhè běn shū" },
+          { zh: "放在", py: "fàng zài" },
+          { zh: "桌子上", py: "zhuōzi shàng" }
+        ],
+        explain: "Конструкция с 把 выносит известный предмет перед глаголом, когда действие меняет положение или состояние предмета."
+      },
+      {
+        tag: "HSK 3 · Причинно-следственная связка 因为…所以…",
+        ru: "Так как шёл сильный дождь, мы остались дома.",
+        formula: "因为 (Причина) + 所以 (Следствие)",
+        tokens: [
+          { zh: "因为", py: "yīnwèi" },
+          { zh: "下大雨", py: "xià dàyǔ" },
+          { zh: "所以", py: "suǒyǐ" },
+          { zh: "我们", py: "wǒmen" },
+          { zh: "留在家里", py: "liú zài jiālǐ" }
+        ],
+        explain: "В китайском языке парные союзы 因为 (потому что) и 所以 (поэтому) употребляются вместе в одном предложении."
+      }
+    ];
+
+    const GRAMMAR_REFERENCE = [
+      {
+        level: "HSK 1",
+        title: "Порядок слов: Субъект + Время + Место + Действие",
+        formula: "S + Время + 在 + Место + V + O",
+        desc: "В отличие от русского языка, обстоятельство места («в школе», «дома») почти всегда ставится до глагола, а не после него.",
+        exZh: "我明天在图书馆看书。",
+        exPy: "Wǒ míngtiān zài túshūguǎn kànshū.",
+        exRu: "Я завтра в библиотеке буду читать книгу."
+      },
+      {
+        level: "HSK 2",
+        title: "Частица завершённости 了 (le) и опыта 过 (guo)",
+        formula: "V + 了 (факт свершения) / V + 过 (жизненный опыт)",
+        desc: "了 показывает, что конкретное действие завершилось, а 过 — что действие когда-либо случалось в прошлом (опыт «бывал / пробовал»).",
+        exZh: "我去过北京两次。",
+        exPy: "Wǒ qùguo Běijīng liǎng cì.",
+        exRu: "Я бывал в Пекине два раза."
+      },
+      {
+        level: "HSK 3",
+        title: "Конструкция с 把 (bǎ) — воздействие на предмет",
+        formula: "S + 把 + O + V + Результат / Место",
+        desc: "Используется, когда нужно показать, что произошло с конкретным предметом (куда его переместили или как изменили).",
+        exZh: "我已经把生词写在本子上了。",
+        exPy: "Wǒ yǐjīng bǎ shēngcí xiě zài běnzi shàng le.",
+        exRu: "Я уже записал новые слова в тетрадь."
+      },
+      {
+        level: "HSK 4",
+        title: "Выделительная конструкция 是…的 (shì…de)",
+        formula: "S + 是 + [Время / Место / Способ] + V + 的",
+        desc: "Используется, когда сам факт действия уже известен, и нужно выделить деталь: когда, где, с кем или каким образом оно произошло.",
+        exZh: "我是坐飞机来中国的。",
+        exPy: "Wǒ shì zuò fēijī lái Zhōngguó de.",
+        exRu: "Я прилетел в Китай именно на самолёте."
+      }
+    ];
+
+    // =========================================================================
+    // 5. APPLICATION STATE & STORAGE (Safe LocalStorage wrapper)
+    // =========================================================================
+    const COURSE_LIST = ["MY", "HSK 1", "HSK 2", "HSK 3", "HSK 4", "HSK 5", "HSK 6", "HSK 7–9"];
+
+    let state = {
+      words: JSON.parse(JSON.stringify(INITIAL_WORDS)),
+      srs: {}, // wordId -> { reps, interval, ease, due, status: 'new'|'learning'|'mastered' }
+      selectedCourses: ["MY", "HSK 1"], // "★ Мои слова" enabled right alongside HSK 1!
+      studyMode: "mix", // 'mix' | 'swipe' | 'pinyin' | 'quiz' | 'translate' | 'draw'
+      dailyLimit: 15,
+      cardFront: "hanzi",
+      autoAudio: true,
+      theme: "dark",
+      todayDone: 4,
+      streak: 5,
+      dictCategory: "ALL"
+    };
+
+    function loadSavedState() {
+      try {
+        const raw = localStorage.getItem("hanzi_pro_state_v2");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.words) && parsed.words.length > 0) {
+            state = Object.assign(state, parsed);
+          }
+        }
+      } catch (e) {
+        // Fallback to in-memory state in restricted iframe
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem("hanzi_pro_state_v2", JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById("appToast");
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => el.classList.remove("show"), 2400);
+    }
+
+    // =========================================================================
+    // 6. PINYIN NUMBER-TO-TONE CONVERTER & FUZZY MATCHING
+    // =========================================================================
+    const TONE_MAP = {
+      a: ["ā", "á", "ǎ", "à", "a"],
+      e: ["ē", "é", "ě", "è", "e"],
+      i: ["ī", "í", "ǐ", "ì", "i"],
+      o: ["ō", "ó", "ǒ", "ò", "o"],
+      u: ["ū", "ú", "ǔ", "ù", "u"],
+      v: ["ǖ", "ǘ", "ǚ", "ǜ", "ü"],
+      ü: ["ǖ", "ǘ", "ǚ", "ǜ", "ü"]
+    };
+
+    function convertNumberedPinyin(input) {
+      if (!input) return "";
+      return input.replace(/([a-zA-ZüÜvV]+)([1-5])/g, (full, syl, toneStr) => {
+        const tone = parseInt(toneStr, 10) - 1;
+        let s = syl.replace(/v/g, "ü").replace(/V/g, "Ü");
+        const lower = s.toLowerCase();
+        let targetIdx = -1;
+        if (lower.includes("a")) targetIdx = lower.indexOf("a");
+        else if (lower.includes("e")) targetIdx = lower.indexOf("e");
+        else if (lower.includes("ou")) targetIdx = lower.indexOf("o");
+        else {
+          for (let i = lower.length - 1; i >= 0; i--) {
+            if ("aiouü".includes(lower[i])) {
+              targetIdx = i;
+              break;
+            }
+          }
+        }
+        if (targetIdx === -1) return s;
+        const ch = lower[targetIdx];
+        const rep = (TONE_MAP[ch] && TONE_MAP[ch][tone]) || s[targetIdx];
+        return s.slice(0, targetIdx) + rep + s.slice(targetIdx + 1);
+      });
+    }
+
+    function normalizePinyinForCompare(str) {
+      return convertNumberedPinyin((str || "").toLowerCase())
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zü]/g, "");
+    }
+
+    function normalizePinyinWithTones(str) {
+      return convertNumberedPinyin((str || "").toLowerCase().trim()).replace(/\s+/g, "");
+    }
+
+    // =========================================================================
+    // 7. SPEECH SYNTHESIS (Putonghua zh-CN)
+    // =========================================================================
+    function speakText(text) {
+      if (!text) return;
+      try {
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = "zh-CN";
+          utter.rate = 0.85;
+          window.speechSynthesis.speak(utter);
+        }
+      } catch (e) {}
+    }
+
+    // =========================================================================
+    // 8. TAB NAVIGATION
+    // =========================================================================
+    function switchTab(tabName) {
+      const tabs = ["learn", "words", "strokes", "grammar", "progress"];
+      tabs.forEach(t => {
+        const sec = document.getElementById("tab-" + t);
+        if (sec) sec.classList.toggle("hidden", t !== tabName);
+      });
+      document.querySelectorAll(".nav-item").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === tabName);
+      });
+      if (tabName === "learn") {
+        renderLearnDashboard();
+      } else if (tabName === "words") {
+        renderDictionaryCategoryPills();
+        renderDictionaryList();
+      } else if (tabName === "strokes") {
+        renderStrokesReferenceTab();
+      } else if (tabName === "grammar") {
+        renderGrammarTab();
+      } else if (tabName === "progress") {
+        renderProgressTab();
+      }
+    }
+
+    // =========================================================================
+    // 9. TAB 1: LEARN DASHBOARD & COURSE SELECTION (Attachment 1 upgrade)
+    // =========================================================================
+    function renderLearnDashboard() {
+      const container = document.getElementById("coursePillsContainer");
+      if (!container) return;
+      container.innerHTML = "";
+
+      COURSE_LIST.forEach(course => {
+        const count = state.words.filter(w => w.course === course).length;
+        const isActive = state.selectedCourses.includes(course);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "course-pill" + (course === "MY" ? " my-words-pill" : "") + (isActive ? " active" : "");
+        const label = course === "MY" ? "★ Мои слова" : course;
+        btn.innerHTML = `<span>${label}</span><span class="pill-count">${count}</span>`;
+        btn.addEventListener("click", () => toggleCourseSelection(course));
+        container.appendChild(btn);
+      });
+
+      // Render My Words inline box
+      const myWords = state.words.filter(w => w.course === "MY");
+      const countEl = document.getElementById("myWordsCountInline");
+      if (countEl) countEl.textContent = String(myWords.length);
+
+      const chipsEl = document.getElementById("myWordsInlineChips");
+      if (chipsEl) {
+        chipsEl.innerHTML = "";
+        myWords.forEach(w => {
+          const st = (state.srs[w.id] && state.srs[w.id].status) || "new";
+          const dotColor = st === "mastered" ? "var(--success)" : st === "learning" ? "var(--warning)" : "var(--accent)";
+          const chip = document.createElement("div");
+          chip.className = "mini-word-chip";
+          chip.title = "Нажмите, чтобы открыть порядок черт и пропись";
+          chip.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${dotColor};"></span><b class="hanzi-font" style="font-size:15px;">${w.hanzi}</b><span style="color:var(--accent);">${w.pinyin}</span><span style="color:var(--text-secondary);font-size:12px;">— ${w.ru.split(";")[0]}</span>`;
+          chip.addEventListener("click", () => openStrokeScreen(w));
+          chipsEl.appendChild(chip);
+        });
+      }
+
+      // Compute queue statistics
+      const pool = getActiveStudyPool(false);
+      const myInPool = pool.filter(w => w.course === "MY").length;
+      const reviewInPool = pool.filter(w => state.srs[w.id] && state.srs[w.id].reps > 0).length;
+      const newInPool = pool.length - reviewInPool;
+
+      document.getElementById("todayDueSummary").textContent = `${pool.length} карточек: готово к занятию`;
+      document.getElementById("todayDueBreakdown").textContent =
+        `Новых: ${newInPool} · На повторение: ${reviewInPool} · Из списка «Мои слова»: ${myInPool}`;
+
+      if (pool.length > 0) {
+        document.getElementById("heroPreviewChar").textContent = Array.from(pool[0].hanzi)[0];
+      }
+
+      // Stats counters
+      let learningCount = 0;
+      let masteredCount = 0;
+      Object.values(state.srs).forEach(rec => {
+        if (rec.status === "learning") learningCount++;
+        else if (rec.status === "mastered") masteredCount++;
+      });
+      document.getElementById("statStreak").textContent = String(state.streak);
+      document.getElementById("statTodayDone").textContent = String(state.todayDone);
+      document.getElementById("statLearning").textContent = String(learningCount);
+      document.getElementById("statMastered").textContent = String(masteredCount);
+    }
+
+    function toggleCourseSelection(course) {
+      const idx = state.selectedCourses.indexOf(course);
+      if (idx >= 0) {
+        if (state.selectedCourses.length > 1) {
+          state.selectedCourses.splice(idx, 1);
+        } else {
+          showToast("Должен быть выбран хотя бы один курс");
+          return;
+        }
+      } else {
+        state.selectedCourses.push(course);
+      }
+      saveState();
+      renderLearnDashboard();
+    }
+
+    function selectOnlyMyWords() {
+      state.selectedCourses = ["MY"];
+      saveState();
+      renderLearnDashboard();
+      showToast("Выбран курс «★ Только Мои слова»");
+    }
+
+    function setStudyMode(mode) {
+      state.studyMode = mode;
+      document.querySelectorAll("#studyModeGrid .mode-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === mode);
+      });
+      saveState();
+    }
+
+    function getActiveStudyPool(onlyMyWords) {
+      const courses = onlyMyWords ? ["MY"] : state.selectedCourses;
+      // Sort so "MY" words come first!
+      const filtered = state.words.filter(w => courses.includes(w.course));
+      filtered.sort((a, b) => {
+        if (a.course === "MY" && b.course !== "MY") return -1;
+        if (a.course !== "MY" && b.course === "MY") return 1;
+        return 0;
+      });
+      return filtered.slice(0, state.dailyLimit);
+    }
+
+    // =========================================================================
+    // 10. MULTI-MODE SRS SESSION + ANKI SWIPES + DESKTOP HOTKEYS 1-4
+    // =========================================================================
+    let session = {
+      active: false,
+      queue: [],
+      index: 0,
+      revealed: false,
+      currentCardMode: "swipe", // 'swipe' | 'pinyin' | 'quiz' | 'translate' | 'draw'
+      drawStrokeIdx: 0,
+      drawMistakes: 0
+    };
+
+    const CARD_MODES_CYCLE = ["swipe", "pinyin", "quiz", "translate", "draw"];
+    const MODE_NAMES_RU = {
+      swipe: "🃏 Свайп-карточка",
+      pinyin: "⌨️ Ввод пиньиня",
+      quiz: "🎯 Тест (4 варианта)",
+      translate: "✍️ Ввод перевода",
+      draw: "🖌️ Пропись по памяти"
+    };
+
+    function startStudySession(onlyMyWords) {
+      const pool = getActiveStudyPool(onlyMyWords);
+      if (pool.length === 0) {
+        showToast("В выбранном курсе пока нет слов. Добавьте слова!");
+        return;
+      }
+      session.active = true;
+      session.queue = pool.slice();
+      session.index = 0;
+      document.getElementById("learn-dashboard-view").classList.add("hidden");
+      document.getElementById("stroke-detail-screen").classList.add("hidden");
+      document.getElementById("learn-session-view").classList.remove("hidden");
+      renderCurrentSessionCard();
+    }
+
+    function endStudySession() {
+      session.active = false;
+      document.getElementById("learn-session-view").classList.add("hidden");
+      document.getElementById("learn-dashboard-view").classList.remove("hidden");
+      renderLearnDashboard();
+    }
+
+    function pickModeForCurrentCard() {
+      if (state.studyMode !== "mix") return state.studyMode;
+      return CARD_MODES_CYCLE[session.index % CARD_MODES_CYCLE.length];
+    }
+
+    function cycleSessionCardMode() {
+      const curIdx = CARD_MODES_CYCLE.indexOf(session.currentCardMode);
+      session.currentCardMode = CARD_MODES_CYCLE[(curIdx + 1) % CARD_MODES_CYCLE.length];
+      session.revealed = false;
+      renderCurrentSessionCard(true);
+    }
+
+    function getCurrentSessionWord() {
+      return session.queue[session.index] || state.words[0];
+    }
+
+    function renderCurrentSessionCard(keepChosenMode) {
+      const word = getCurrentSessionWord();
+      if (!word) {
+        endStudySession();
+        return;
+      }
+      if (!keepChosenMode) {
+        session.currentCardMode = pickModeForCurrentCard();
+      }
+      session.revealed = false;
+
+      document.getElementById("sessionIndexLabel").textContent = String(session.index + 1);
+      document.getElementById("sessionTotalLabel").textContent = String(session.queue.length);
+      document.getElementById("sessionCurrentModeBadge").textContent = MODE_NAMES_RU[session.currentCardMode];
+      document.getElementById("cardCourseTag").textContent = word.course === "MY" ? "★ Мои слова" : word.course;
+
+      // Populate answer block
+      document.getElementById("srsAnswerPinyin").textContent = word.pinyin;
+      document.getElementById("srsAnswerRu").textContent = word.ru;
+      document.getElementById("srsAnswerDecomp").textContent = word.decomp || "";
+      document.getElementById("srsExampleZh").textContent = word.exZh || word.hanzi;
+      document.getElementById("srsExamplePy").textContent = word.exPy || word.pinyin;
+      document.getElementById("srsExampleRu").textContent = word.exRu || word.ru;
+      document.getElementById("srsAnswerBlock").classList.add("hidden");
+      document.getElementById("srsFlipFooter").classList.remove("hidden");
+
+      const body = document.getElementById("srsCardBody");
+      body.innerHTML = "";
+
+      if (session.currentCardMode === "swipe") {
+        renderCardModeSwipe(body, word);
+      } else if (session.currentCardMode === "pinyin") {
+        renderCardModePinyin(body, word);
+      } else if (session.currentCardMode === "quiz") {
+        renderCardModeQuiz(body, word);
+      } else if (session.currentCardMode === "translate") {
+        renderCardModeTranslate(body, word);
+      } else if (session.currentCardMode === "draw") {
+        renderCardModeDraw(body, word);
+      }
+
+      if (state.autoAudio && session.currentCardMode !== "pinyin") {
+        speakText(word.hanzi);
+      }
+    }
+
+    // Mode 1: Classic Swipeable Card
+    function renderCardModeSwipe(container, word) {
+      let promptMain = word.hanzi;
+      let promptSub = "Вспомните чтение (пиньинь) и перевод, затем переверните или смахните карточку";
+      if (state.cardFront === "pinyin") {
+        promptMain = word.pinyin;
+        promptSub = "Вспомните иероглиф и русский перевод";
+      } else if (state.cardFront === "ru") {
+        promptMain = word.ru;
+        promptSub = "Вспомните китайский иероглиф и пиньинь";
+      }
+      container.innerHTML = `
+        <div class="calligraphy-wrap" style="margin-bottom:6px;">
+          <div class="hero-preview-grid hanzi-font" style="width:146px;height:146px;font-size:${state.cardFront === 'hanzi' ? '74px' : '22px'};padding:10px;">
+            ${promptMain}
+          </div>
+        </div>
+        <div style="font-size:13px;color:var(--text-secondary);">${promptSub}</div>
+      `;
+    }
+
+    // Mode 2: Write Pinyin with tone helper
+    function renderCardModePinyin(container, word) {
+      container.innerHTML = `
+        <div class="hanzi-font" style="font-size:68px;font-weight:700;line-height:1.15;margin-bottom:4px;">${word.hanzi}</div>
+        <div style="font-size:13.5px;color:var(--text-secondary);margin-bottom:10px;">Введите пиньинь (можно с цифрами тонов, например: <b>${word.pinyinRaw || 'ni3'}</b>)</div>
+        <div style="max-width:340px;margin:0 auto;">
+          <input type="text" id="srsPinyinInput" class="text-input" placeholder="Введите пиньинь..." autocomplete="off" />
+          <div class="tone-helper-bar" id="pinyinToneBar">
+            <button type="button" class="tone-key-btn" onclick="insertToneChar('ā')">ā</button>
+            <button type="button" class="tone-key-btn" onclick="insertToneChar('á')">á</button>
+            <button type="button" class="tone-key-btn" onclick="insertToneChar('ǎ')">ǎ</button>
+            <button type="button" class="tone-key-btn" onclick="insertToneChar('à')">à</button>
+            <button type="button" class="tone-key-btn" onclick="insertToneChar('ē')">ē</button>
+            <button type="button" class="tone-key-btn" onclick="insertToneChar('é')">é</button>
+            <button type="button" class="tone-key-btn" onclick="insertToneChar('ě')">ě</button>
+            <button type="button" class="tone-key-btn" onclick="insertToneChar('è')">è</button>
+            <button type="button" class="tone-key-btn" onclick="insertToneChar('ǐ')">ǐ</button>
+            <button type="button" class="tone-key-btn" onclick="insertToneChar('ǒ')">ǒ</button>
+            <button type="button" class="tone-key-btn" onclick="insertToneChar('ǔ')">ǔ</button>
+          </div>
+          <div id="pinyinCheckFeedback" style="font-size:13.5px;font-weight:700;min-height:22px;margin-top:4px;"></div>
+          <button type="button" class="btn btn-sm btn-primary" style="margin-top:6px;" onclick="checkSrsPinyinInput()">Проверить пиньинь</button>
+        </div>
+      `;
+      const inp = document.getElementById("srsPinyinInput");
+      if (inp) {
+        inp.addEventListener("input", () => {
+          inp.value = convertNumberedPinyin(inp.value);
+        });
+        inp.addEventListener("keydown", e => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            checkSrsPinyinInput();
+          }
+        });
+        setTimeout(() => inp.focus(), 40);
+      }
+    }
+
+    function insertToneChar(ch) {
+      const inp = document.getElementById("srsPinyinInput");
+      if (!inp) return;
+      inp.value += ch;
+      inp.focus();
+    }
+
+    function checkSrsPinyinInput() {
+      const inp = document.getElementById("srsPinyinInput");
+      const fb = document.getElementById("pinyinCheckFeedback");
+      const word = getCurrentSessionWord();
+      if (!inp || !fb || !word) return;
+      const userVal = normalizePinyinForCompare(inp.value);
+      const targets = word.pinyin.split("/").map(s => normalizePinyinForCompare(s));
+      const rawTarget = normalizePinyinForCompare(word.pinyinRaw || "");
+      if (userVal && (targets.includes(userVal) || userVal === rawTarget)) {
+        fb.style.color = "var(--success)";
+        fb.textContent = `✓ Верно! ${word.pinyin} — ${word.ru}`;
+        revealSessionAnswer();
+      } else {
+        fb.style.color = "var(--danger)";
+        fb.textContent = `✕ Почти! Правильное чтение: ${word.pinyin}`;
+        revealSessionAnswer();
+      }
+    }
+
+    // Mode 3: 4-Option Multiple Choice Quiz
+    function renderCardModeQuiz(container, word) {
+      const others = state.words.filter(w => w.id !== word.id);
+      const shuffledOthers = others.slice().sort(() => Math.random() - 0.5).slice(0, 3);
+      const options = [word, ...shuffledOthers].sort(() => Math.random() - 0.5);
+
+      container.innerHTML = `
+        <div class="hanzi-font" style="font-size:68px;font-weight:700;line-height:1.15;">${word.hanzi}</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:2px;">Выберите правильный перевод и чтение:</div>
+        <div class="quiz-options" id="srsQuizOptionsBox"></div>
+      `;
+      const box = document.getElementById("srsQuizOptionsBox");
+      options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "quiz-opt-btn";
+        btn.innerHTML = `<div style="color:var(--accent);font-size:13px;">${opt.pinyin}</div><div>${opt.ru.split(";")[0]}</div>`;
+        btn.addEventListener("click", () => {
+          if ( opt.id === word.id ) {
+            btn.classList.add("correct");
+            showToast("✓ Верно! Смахните вправо или нажмите 3");
+          } else {
+            btn.classList.add("wrong");
+            showToast("✕ Ошибка! Посмотрите правильный ответ ниже");
+          }
+          revealSessionAnswer();
+        });
+        box.appendChild(btn);
+      });
+    }
+
+    // Mode 4: Write Russian Translation
+    function renderCardModeTranslate(container, word) {
+      container.innerHTML = `
+        <div class="hanzi-font" style="font-size:64px;font-weight:700;line-height:1.1;">${word.hanzi}</div>
+        <div style="font-size:18px;font-weight:700;color:var(--accent);margin-bottom:8px;">${word.pinyin}</div>
+        <div style="max-width:340px;margin:0 auto;">
+          <input type="text" id="srsTranslateInput" class="text-input" placeholder="Напишите перевод на русском..." autocomplete="off" />
+          <div id="translateCheckFeedback" style="font-size:13.5px;font-weight:700;min-height:22px;margin-top:6px;"></div>
+          <button type="button" class="btn btn-sm btn-primary" style="margin-top:6px;" onclick="checkSrsTranslateInput()">Проверить перевод</button>
+        </div>
+      `;
+      const inp = document.getElementById("srsTranslateInput");
+      if (inp) {
+        inp.addEventListener("keydown", e => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            checkSrsTranslateInput();
+          }
+        });
+        setTimeout(() => inp.focus(), 40);
+      }
+    }
+
+    function checkSrsTranslateInput() {
+      const inp = document.getElementById("srsTranslateInput");
+      const fb = document.getElementById("translateCheckFeedback");
+      const word = getCurrentSessionWord();
+      if (!inp || !fb || !word) return;
+      const val = (inp.value || "").trim().toLowerCase();
+      const keywords = word.ru.toLowerCase().split(/[,;()/]+/).map(s => s.trim()).filter(Boolean);
+      const matched = val.length >= 2 && keywords.some(k => k.includes(val) || val.includes(k));
+      if (matched) {
+        fb.style.color = "var(--success)";
+        fb.textContent = `✓ Точно! Полное значение: ${word.ru}`;
+      } else {
+        fb.style.color = "var(--warning)";
+        fb.textContent = `Сверьтесь со словарём: ${word.ru}`;
+      }
+      revealSessionAnswer();
+    }
+
+    // Mode 5: Draw Hanzi from Memory inside SRS
+    let srsMiniDrawState = {
+      strokes: [],
+      currentStroke: 0,
+      showOutline: false,
+      drawing: false,
+      userPoints: []
+    };
+
+    function renderCardModeDraw(container, word) {
+      const firstChar = Array.from(word.hanzi)[0];
+      const strokes = getStrokesForChar(firstChar);
+      srsMiniDrawState = {
+        char: firstChar,
+        strokes: strokes,
+        currentStroke: 0,
+        showOutline: false,
+        drawing: false,
+        userPoints: []
+      };
+
+      container.innerHTML = `
+        <div style="font-size:16px;font-weight:700;color:var(--accent);">${word.pinyin}</div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:8px;">${word.ru}</div>
+        <div class="calligraphy-wrap">
+          <div class="mizige-box" style="width:200px;height:200px;">
+            <canvas id="srsMiniDrawCanvas" class="mizige-canvas" width="240" height="240"></canvas>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:8px;margin-top:6px;flex-wrap:wrap;">
+          <button type="button" class="toggle-pill" id="srsDrawContourBtn" onclick="toggleSrsMiniContour()">👁 Контур: Выкл</button>
+          <button type="button" class="btn btn-sm" onclick="resetSrsMiniDraw()">🔄 Сброс</button>
+          <span style="font-size:12.5px;color:var(--accent);font-weight:700;align-self:center;" id="srsMiniDrawProgress">Черта 1 из ${strokes.length}</span>
+        </div>
+      `;
+      initSrsMiniCanvas();
+    }
+
+    function toggleSrsMiniContour() {
+      srsMiniDrawState.showOutline = !srsMiniDrawState.showOutline;
+      const btn = document.getElementById("srsDrawContourBtn");
+      if (btn) {
+        btn.classList.toggle("active", srsMiniDrawState.showOutline);
+        btn.textContent = srsMiniDrawState.showOutline ? "👁 Контур: Вкл" : "👁 Контур: Выкл";
+      }
+      drawSrsMiniCanvas();
+    }
+
+    function resetSrsMiniDraw() {
+      srsMiniDrawState.currentStroke = 0;
+      srsMiniDrawState.userPoints = [];
+      const prog = document.getElementById("srsMiniDrawProgress");
+      if (prog) prog.textContent = `Черта 1 из ${srsMiniDrawState.strokes.length}`;
+      drawSrsMiniCanvas();
+    }
+
+    function initSrsMiniCanvas() {
+      const canvas = document.getElementById("srsMiniDrawCanvas");
+      if (!canvas) return;
+      drawSrsMiniCanvas();
+
+      const getPos = e => {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return [
+          ((clientX - rect.left) / rect.width) * 100,
+          ((clientY - rect.top) / rect.height) * 100
+        ];
+      };
+
+      const start = e => {
+        e.stopPropagation();
+        if (srsMiniDrawState.currentStroke >= srsMiniDrawState.strokes.length) return;
+        srsMiniDrawState.drawing = true;
+        srsMiniDrawState.userPoints = [getPos(e)];
+        drawSrsMiniCanvas();
+      };
+
+      const move = e => {
+        if (!srsMiniDrawState.drawing) return;
+        e.preventDefault();
+        e.stopPropagation();
+        srsMiniDrawState.userPoints.push(getPos(e));
+        drawSrsMiniCanvas();
+      };
+
+      const end = e => {
+        if (!srsMiniDrawState.drawing) return;
+        e.stopPropagation();
+        srsMiniDrawState.drawing = false;
+        validateSrsMiniStroke();
+      };
+
+      canvas.onmousedown = start;
+      canvas.onmousemove = move;
+      canvas.onmouseup = end;
+      canvas.ontouchstart = start;
+      canvas.ontouchmove = move;
+      canvas.ontouchend = end;
+    }
+
+    function validateSrsMiniStroke() {
+      const pts = srsMiniDrawState.userPoints;
+      const target = srsMiniDrawState.strokes[srsMiniDrawState.currentStroke];
+      if (!target || pts.length < 2) {
+        srsMiniDrawState.userPoints = [];
+        drawSrsMiniCanvas();
+        return;
+      }
+      const startDist = Math.hypot(pts[0][0] - target.points[0][0], pts[0][1] - target.points[0][1]);
+      const lastTarget = target.points[target.points.length - 1];
+      const endDist = Math.hypot(pts[pts.length - 1][0] - lastTarget[0], pts[pts.length - 1][1] - lastTarget[1]);
+
+      if (startDist < 38 && endDist < 42) {
+        srsMiniDrawState.currentStroke++;
+        srsMiniDrawState.userPoints = [];
+        const prog = document.getElementById("srsMiniDrawProgress");
+        if (srsMiniDrawState.currentStroke >= srsMiniDrawState.strokes.length) {
+          if (prog) prog.textContent = "✓ Иероглиф написан верно!";
+          revealSessionAnswer();
+        } else {
+          if (prog) prog.textContent = `Черта ${srsMiniDrawState.currentStroke + 1} из ${srsMiniDrawState.strokes.length}`;
+        }
+      } else {
+        const prog = document.getElementById("srsMiniDrawProgress");
+        if (prog) prog.textContent = "Попробуйте провести черту точнее (или включите Контур)";
+        srsMiniDrawState.userPoints = [];
+      }
+      drawSrsMiniCanvas();
+    }
+
+    function drawSrsMiniCanvas() {
+      const canvas = document.getElementById("srsMiniDrawCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      renderCalligraphyCanvas(ctx, canvas.width, canvas.height, {
+        strokes: srsMiniDrawState.strokes,
+        completedCount: srsMiniDrawState.currentStroke,
+        activeStrokeIndex: -1,
+        activeProgress: 0,
+        showOutline: srsMiniDrawState.showOutline,
+        userPoints: srsMiniDrawState.userPoints,
+        hintStrokeIndex: -1
+      });
+    }
+
+    function revealSessionAnswer() {
+      session.revealed = true;
+      document.getElementById("srsAnswerBlock").classList.remove("hidden");
+      document.getElementById("srsFlipFooter").classList.add("hidden");
+    }
+
+    function gradeCurrentCard(grade) {
+      const word = getCurrentSessionWord();
+      if (!word) return;
+      const prev = state.srs[word.id] || { reps: 0, interval: 0, ease: 2.5, status: "new" };
+      if (grade === 1) {
+        prev.reps = 0;
+        prev.interval = 0;
+        prev.status = "learning";
+      } else if (grade === 2) {
+        prev.reps += 1;
+        prev.interval = Math.max(1, Math.round((prev.interval || 1) * 1.2));
+        prev.status = "learning";
+      } else if (grade === 3) {
+        prev.reps += 1;
+        prev.interval = prev.interval === 0 ? 1 : Math.round(prev.interval * prev.ease);
+        prev.status = prev.reps >= 2 ? "mastered" : "learning";
+      } else if (grade === 4) {
+        prev.reps += 2;
+        prev.interval = prev.interval === 0 ? 4 : Math.round(prev.interval * prev.ease * 1.4);
+        prev.status = "mastered";
+      }
+      state.srs[word.id] = prev;
+      state.todayDone += 1;
+      saveState();
+
+      // Advance to next card
+      session.index += 1;
+      if (session.index >= session.queue.length) {
+        showToast("🎉 Сессия завершена! Отличная работа!");
+        endStudySession();
+      } else {
+        renderCurrentSessionCard(false);
+      }
+    }
+
+    function speakCurrentSessionWord() {
+      const w = getCurrentSessionWord();
+      if (w) speakText(w.hanzi);
+    }
+
+    function speakCurrentExample() {
+      const w = getCurrentSessionWord();
+      if (w) speakText(w.exZh || w.hanzi);
+    }
+
+    // =========================================================================
+    // 11. ANKI / TINDER CARD SWIPE GESTURES + DESKTOP HOTKEYS (1, 2, 3, 4, Space)
+    // =========================================================================
+    function initCardSwipeAndHotkeys() {
+      const card = document.getElementById("srsCardElement");
+      if (!card) return;
+
+      let startX = 0;
+      let startY = 0;
+      let isDragging = false;
+
+      const resetCardVisual = () => {
+        card.classList.remove("dragging");
+        card.style.transform = "";
+        ["badgeLeft", "badgeRight", "badgeDown", "badgeUp"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.opacity = "0";
+        });
+      };
+
+      const onPointerDown = (x, y, target) => {
+        if (!session.active) return;
+        if (target && (target.tagName === "INPUT" || target.tagName === "BUTTON" || target.tagName === "CANVAS")) return;
+        startX = x;
+        startY = y;
+        isDragging = true;
+        card.classList.add("dragging");
+      };
+
+      const onPointerMove = (x, y) => {
+        if (!isDragging) return;
+        const dx = x - startX;
+        const dy = y - startY;
+        const rot = dx * 0.05;
+        card.style.transform = `translate(${dx * 0.65}px, ${dy * 0.35}px) rotate(${rot}deg)`;
+
+        const bL = document.getElementById("badgeLeft");
+        const bR = document.getElementById("badgeRight");
+        const bD = document.getElementById("badgeDown");
+        const bU = document.getElementById("badgeUp");
+        if (bL) bL.style.opacity = dx < -45 ? String(Math.min(1, (-dx - 45) / 60)) : "0";
+        if (bR) bR.style.opacity = dx > 45 ? String(Math.min(1, (dx - 45) / 60)) : "0";
+        if (bD) bD.style.opacity = dy > 55 && Math.abs(dx) < 55 ? String(Math.min(1, (dy - 55) / 55)) : "0";
+        if (bU) bU.style.opacity = dy < -55 && Math.abs(dx) < 55 ? String(Math.min(1, (-dy - 55) / 55)) : "0";
+      };
+
+      const onPointerUp = (x, y) => {
+        if (!isDragging) return;
+        isDragging = false;
+        const dx = x - startX;
+        const dy = y - startY;
+        resetCardVisual();
+
+        if (dx < -85) {
+          gradeCurrentCard(1); // Swipe Left -> Again
+        } else if (dx > 85) {
+          gradeCurrentCard(3); // Swipe Right -> Good
+        } else if (dy > 85 && Math.abs(dx) < 65) {
+          gradeCurrentCard(2); // Swipe Down -> Hard
+        } else if (dy < -85 && Math.abs(dx) < 65) {
+          gradeCurrentCard(4); // Swipe Up -> Easy
+        }
+      };
+
+      card.addEventListener("mousedown", e => onPointerDown(e.clientX, e.clientY, e.target));
+      window.addEventListener("mousemove", e => onPointerMove(e.clientX, e.clientY));
+      window.addEventListener("mouseup", e => onPointerUp(e.clientX, e.clientY));
+
+      card.addEventListener("touchstart", e => {
+        if (e.touches.length === 1) {
+          onPointerDown(e.touches[0].clientX, e.touches[0].clientY, e.target);
+        }
+      }, { passive: true });
+
+      card.addEventListener("touchmove", e => {
+        if (isDragging && e.touches.length === 1) {
+          onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      card.addEventListener("touchend", e => {
+        if (isDragging && e.changedTouches.length === 1) {
+          onPointerUp(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+        }
+      });
+
+      // Desktop Keyboard Shortcuts (1, 2, 3, 4, Arrows, Space, R, W)
+      window.addEventListener("keydown", e => {
+        if (!session.active) return;
+        const strokeOpen = !document.getElementById("stroke-detail-screen").classList.contains("hidden");
+        if (strokeOpen) return;
+        if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+
+        if (e.key === " " || e.key === "Enter") {
+          e.preventDefault();
+          if (!session.revealed) revealSessionAnswer();
+          else gradeCurrentCard(3);
+        } else if (e.key === "1" || e.key === "ArrowLeft") {
+          e.preventDefault();
+          gradeCurrentCard(1);
+        } else if (e.key === "2" || e.key === "ArrowDown") {
+          e.preventDefault();
+          gradeCurrentCard(2);
+        } else if (e.key === "3" || e.key === "ArrowRight") {
+          e.preventDefault();
+          gradeCurrentCard(3);
+        } else if (e.key === "4" || e.key === "ArrowUp") {
+          e.preventDefault();
+          gradeCurrentCard(4);
+        } else if (e.key.toLowerCase() === "r") {
+          e.preventDefault();
+          speakCurrentSessionWord();
+        } else if (e.key.toLowerCase() === "w") {
+          e.preventDefault();
+          openStrokeScreenFromSession();
+        }
+      });
+    }
+
+    // =========================================================================
+    // 12. STROKE ORDER & CALLIGRAPHY ENGINE (Attachment 2 Full Upgrade)
+    // =========================================================================
+    let strokeApp = {
+      word: INITIAL_WORDS[0],
+      charIndex: 0,
+      char: "了",
+      strokes: CHAR_STROKES_DB["了"],
+      mode: "anim", // 'anim' | 'write'
+      playing: true,
+      loop: true,
+      speed: 1.0,
+      showOutline: true,
+      animStrokeIdx: 0,
+      animProgress: 0,
+      writeStrokeIdx: 0,
+      writeMistakes: 0,
+      hintStrokeIdx: -1,
+      userPoints: [],
+      isDrawing: false,
+      rafId: null,
+      lastTime: 0,
+      returnToSession: false
+    };
+
+    function openStrokeScreenForHero() {
+      const pool = getActiveStudyPool(false);
+      openStrokeScreen(pool[0] || state.words[0], false);
+    }
+
+    function openStrokeScreenFromSession() {
+      openStrokeScreen(getCurrentSessionWord(), true);
+    }
+
+    function openStrokeScreen(wordObj, fromSession) {
+      if (!wordObj) return;
+      // Switch to learn tab container where stroke-detail-screen lives
+      document.querySelectorAll("main, section[id^='tab-']").forEach(el => el.classList.add("hidden"));
+      document.getElementById("tab-learn").classList.remove("hidden");
+      document.getElementById("learn-dashboard-view").classList.add("hidden");
+      document.getElementById("learn-session-view").classList.add("hidden");
+      document.getElementById("stroke-detail-screen").classList.remove("hidden");
+
+      strokeApp.word = wordObj;
+      strokeApp.returnToSession = Boolean(fromSession);
+      strokeApp.charIndex = 0;
+      loadStrokeCharAtIndex(0);
+    }
+
+    function closeStrokeScreen() {
+      stopStrokeAnimationLoop();
+      document.getElementById("stroke-detail-screen").classList.add("hidden");
+      if (strokeApp.returnToSession && session.active) {
+        document.getElementById("learn-session-view").classList.remove("hidden");
+      } else {
+        document.getElementById("learn-dashboard-view").classList.remove("hidden");
+      }
+    }
+
+    function loadStrokeCharAtIndex(idx) {
+      const chars = Array.from(strokeApp.word.hanzi);
+      strokeApp.charIndex = Math.max(0, Math.min(idx, chars.length - 1));
+      strokeApp.char = chars[strokeApp.charIndex];
+      strokeApp.strokes = getStrokesForChar(strokeApp.char);
+
+      document.getElementById("strokeScreenTitleChar").textContent = strokeApp.char;
+      document.getElementById("strokeScreenPinyin").textContent = strokeApp.word.pinyin;
+      document.getElementById("strokeScreenRu").textContent = strokeApp.word.ru;
+      const n = strokeApp.strokes.length;
+      const wordForm = n === 1 ? "черта" : (n >= 2 && n <= 4 ? "черты" : "черт");
+      document.getElementById("strokeCountCaption").textContent = `${n} ${wordForm}`;
+
+      // Render multi-character selector if word has >1 hanzi
+      const tabsEl = document.getElementById("strokeMultiCharTabs");
+      tabsEl.innerHTML = "";
+      if (chars.length > 1) {
+        chars.forEach((c, i) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "btn btn-sm hanzi-font" + (i === strokeApp.charIndex ? " btn-primary" : "");
+          b.textContent = c;
+          b.addEventListener("click", () => loadStrokeCharAtIndex(i));
+          tabsEl.appendChild(b);
+        });
+      }
+
+      renderStrokeStepsAndList();
+      switchStrokeMode(strokeApp.mode);
+    }
+
+    // Switch between "▶ Анимация" and "✍️ Написать самому"
+    function switchStrokeMode(mode) {
+      strokeApp.mode = mode;
+      const animBtn = document.getElementById("modeAnimBtn");
+      const writeBtn = document.getElementById("modeWriteBtn");
+      const animPanel = document.getElementById("animControlSubpanel");
+      const writePanel = document.getElementById("writeControlSubpanel");
+
+      if (mode === "anim") {
+        animBtn.classList.add("btn-primary");
+        writeBtn.classList.remove("btn-primary");
+        animPanel.classList.remove("hidden");
+        writePanel.classList.add("hidden");
+        strokeApp.animStrokeIdx = 0;
+        strokeApp.animProgress = 0;
+        strokeApp.playing = true;
+        updatePlayPauseButtonUI();
+        startStrokeAnimationLoop();
+      } else {
+        writeBtn.classList.add("btn-primary");
+        animBtn.classList.remove("btn-primary");
+        writePanel.classList.remove("hidden");
+        animPanel.classList.add("hidden");
+        stopStrokeAnimationLoop();
+        resetSelfWrite();
+      }
+      syncContourButtonsUI();
+    }
+
+    // Unified Contour Toggle that works cleanly in BOTH "Написать самому" and "Анимация"
+    function toggleContourVisibility() {
+      strokeApp.showOutline = !strokeApp.showOutline;
+      syncContourButtonsUI();
+      renderMainStrokeCanvas();
+    }
+
+    function syncContourButtonsUI() {
+      const label = strokeApp.showOutline ? "👁 Контур: Вкл" : "👁 Контур: Выкл";
+      ["animOutlineToggleBtn", "writeOutlineToggleBtn"].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.textContent = label;
+          btn.classList.toggle("active", strokeApp.showOutline);
+        }
+      });
+    }
+
+    function toggleStrokeAnimation() {
+      strokeApp.playing = !strokeApp.playing;
+      updatePlayPauseButtonUI();
+      if (strokeApp.playing) {
+        if (strokeApp.animStrokeIdx >= strokeApp.strokes.length) {
+          strokeApp.animStrokeIdx = 0;
+          strokeApp.animProgress = 0;
+        }
+        startStrokeAnimationLoop();
+      } else {
+        stopStrokeAnimationLoop();
+      }
+    }
+
+    function updatePlayPauseButtonUI() {
+      const btn = document.getElementById("playPauseAnimBtn");
+      if (btn) {
+        btn.textContent = strokeApp.playing ? "⏸ Пауза" : "▶ Проиграть";
+      }
+    }
+
+    function toggleStrokeLoop() {
+      strokeApp.loop = !strokeApp.loop;
+      const btn = document.getElementById("loopAnimToggleBtn");
+      if (btn) {
+        btn.classList.toggle("active", strokeApp.loop);
+        btn.textContent = strokeApp.loop ? "🔁 Повторять: Вкл" : "🔁 Повторять: Выкл";
+      }
+      if (strokeApp.loop && !strokeApp.playing && strokeApp.mode === "anim") {
+        strokeApp.playing = true;
+        updatePlayPauseButtonUI();
+        startStrokeAnimationLoop();
+      }
+    }
+
+    function setStrokeSpeed(spd) {
+      strokeApp.speed = spd;
+      document.querySelectorAll("#animControlSubpanel .speed-chip").forEach(chip => {
+        chip.classList.toggle("active", parseFloat(chip.dataset.speed) === spd);
+      });
+    }
+
+    function startStrokeAnimationLoop() {
+      stopStrokeAnimationLoop();
+      strokeApp.lastTime = performance.now();
+      const tick = now => {
+        if (!strokeApp.playing || strokeApp.mode !== "anim") return;
+        const dt = (now - strokeApp.lastTime) / 1000;
+        strokeApp.lastTime = now;
+
+        strokeApp.animProgress += dt * 1.45 * strokeApp.speed;
+        if (strokeApp.animProgress >= 1) {
+          strokeApp.animProgress = 0;
+          strokeApp.animStrokeIdx += 1;
+          highlightStepCard(Math.min(strokeApp.animStrokeIdx, strokeApp.strokes.length - 1));
+
+          if (strokeApp.animStrokeIdx >= strokeApp.strokes.length) {
+            if (strokeApp.loop) {
+              // Brief pause at completed character, then loop again
+              strokeApp.animStrokeIdx = 0;
+              strokeApp.animProgress = -0.45;
+            } else {
+              strokeApp.playing = false;
+              updatePlayPauseButtonUI();
+              renderMainStrokeCanvas();
+              return;
+            }
+          }
+        }
+        renderMainStrokeCanvas();
+        strokeApp.rafId = requestAnimationFrame(tick);
+      };
+      strokeApp.rafId = requestAnimationFrame(tick);
+    }
+
+    function stopStrokeAnimationLoop() {
+      if (strokeApp.rafId) {
+        cancelAnimationFrame(strokeApp.rafId);
+        strokeApp.rafId = null;
+      }
+    }
+
+    // Self-Write functions
+    function resetSelfWrite() {
+      strokeApp.writeStrokeIdx = 0;
+      strokeApp.writeMistakes = 0;
+      strokeApp.hintStrokeIdx = -1;
+      strokeApp.userPoints = [];
+      updateWriteStatusText();
+      highlightStepCard(0);
+      renderMainStrokeCanvas();
+    }
+
+    function hintCurrentStroke() {
+      if (strokeApp.writeStrokeIdx >= strokeApp.strokes.length) return;
+      strokeApp.hintStrokeIdx = strokeApp.writeStrokeIdx;
+      renderMainStrokeCanvas();
+      setTimeout(() => {
+        strokeApp.hintStrokeIdx = -1;
+        renderMainStrokeCanvas();
+      }, 950);
+    }
+
+    function updateWriteStatusText(customMsg) {
+      const el = document.getElementById("writeProgressStatus");
+      if (!el) return;
+      if (customMsg) {
+        el.textContent = customMsg;
+        return;
+      }
+      const total = strokeApp.strokes.length;
+      if (strokeApp.writeStrokeIdx >= total) {
+        el.textContent = `✓ Отлично! Все ${total} черт написаны (Ошибок: ${strokeApp.writeMistakes})`;
+      } else {
+        const stInfo = STROKE_TYPES[strokeApp.strokes[strokeApp.writeStrokeIdx].type] || { zh: "", py: "" };
+        el.textContent = `Черта ${strokeApp.writeStrokeIdx + 1} из ${total}: ${stInfo.zh} (${stInfo.py})`;
+      }
+    }
+
+    function initMainStrokeCanvasInteraction() {
+      const canvas = document.getElementById("strokeCanvas");
+      if (!canvas) return;
+
+      const getCoords = e => {
+        const rect = canvas.getBoundingClientRect();
+        const cx = e.touches ? e.touches[0].clientX : e.clientX;
+        const cy = e.touches ? e.touches[0].clientY : e.clientY;
+        return [
+          ((cx - rect.left) / rect.width) * 100,
+          ((cy - rect.top) / rect.height) * 100
+        ];
+      };
+
+      const startDraw = e => {
+        if (strokeApp.mode !== "write") {
+          switchStrokeMode("write");
+        }
+        if (strokeApp.writeStrokeIdx >= strokeApp.strokes.length) {
+          resetSelfWrite();
+        }
+        strokeApp.isDrawing = true;
+        strokeApp.userPoints = [getCoords(e)];
+        renderMainStrokeCanvas();
+      };
+
+      const moveDraw = e => {
+        if (!strokeApp.isDrawing || strokeApp.mode !== "write") return;
+        e.preventDefault();
+        strokeApp.userPoints.push(getCoords(e));
+        renderMainStrokeCanvas();
+      };
+
+      const endDraw = () => {
+        if (!strokeApp.isDrawing || strokeApp.mode !== "write") return;
+        strokeApp.isDrawing = false;
+        verifyMainSelfWriteStroke();
+      };
+
+      canvas.addEventListener("mousedown", startDraw);
+      canvas.addEventListener("mousemove", moveDraw);
+      window.addEventListener("mouseup", endDraw);
+
+      canvas.addEventListener("touchstart", startDraw, { passive: true });
+      canvas.addEventListener("touchmove", moveDraw, { passive: false });
+      canvas.addEventListener("touchend", endDraw);
+    }
+
+    function verifyMainSelfWriteStroke() {
+      const pts = strokeApp.userPoints;
+      const target = strokeApp.strokes[strokeApp.writeStrokeIdx];
+      if (!target || pts.length < 2) {
+        strokeApp.userPoints = [];
+        renderMainStrokeCanvas();
+        return;
+      }
+      const pStart = pts[0];
+      const pEnd = pts[pts.length - 1];
+      const tStart = target.points[0];
+      const tEnd = target.points[target.points.length - 1];
+
+      const dStart = Math.hypot(pStart[0] - tStart[0], pStart[1] - tStart[1]);
+      const dEnd = Math.hypot(pEnd[0] - tEnd[0], pEnd[1] - tEnd[1]);
+
+      if (dStart < 36 && dEnd < 40) {
+        strokeApp.writeStrokeIdx += 1;
+        strokeApp.userPoints = [];
+        highlightStepCard(Math.min(strokeApp.writeStrokeIdx, strokeApp.strokes.length - 1));
+        updateWriteStatusText();
+      } else {
+        strokeApp.writeMistakes += 1;
+        strokeApp.userPoints = [];
+        const info = STROKE_TYPES[target.type] || { zh: target.type, py: "", ru: "" };
+        updateWriteStatusText(`✕ Не совсем так. Нужна черта: ${info.zh} ${info.py} (${info.ru})`);
+        if (strokeApp.writeMistakes % 2 === 0) {
+          hintCurrentStroke();
+        }
+      }
+      renderMainStrokeCanvas();
+    }
+
+    function renderMainStrokeCanvas() {
+      const canvas = document.getElementById("strokeCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+
+      if (strokeApp.mode === "anim") {
+        renderCalligraphyCanvas(ctx, canvas.width, canvas.height, {
+          strokes: strokeApp.strokes,
+          completedCount: Math.max(0, strokeApp.animStrokeIdx),
+          activeStrokeIndex: strokeApp.animProgress > 0 ? strokeApp.animStrokeIdx : -1,
+          activeProgress: Math.max(0, strokeApp.animProgress),
+          showOutline: strokeApp.showOutline,
+          userPoints: [],
+          hintStrokeIndex: -1
+        });
+      } else {
+        renderCalligraphyCanvas(ctx, canvas.width, canvas.height, {
+          strokes: strokeApp.strokes,
+          completedCount: strokeApp.writeStrokeIdx,
+          activeStrokeIndex: -1,
+          activeProgress: 0,
+          showOutline: strokeApp.showOutline,
+          userPoints: strokeApp.userPoints,
+          hintStrokeIndex: strokeApp.hintStrokeIdx
+        });
+      }
+    }
+
+    // Core Calligraphy Brush & MiZiGe Grid Renderer
+    function renderCalligraphyCanvas(ctx, w, h, opts) {
+      ctx.clearRect(0, 0, w, h);
+
+      // 1. Draw MiZiGe (米字格) guidelines
+      ctx.save();
+      ctx.strokeStyle = "#4d3027";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2);
+      ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h);
+      ctx.stroke();
+
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(0, 0); ctx.lineTo(w, h);
+      ctx.moveTo(w, 0); ctx.lineTo(0, h);
+      ctx.stroke();
+      ctx.restore();
+
+      const scale = w / 100;
+
+      // 2. Draw Outline Silhouette if enabled
+      if (opts.showOutline) {
+        opts.strokes.forEach(st => {
+          drawBrushStroke(ctx, st.points, scale, "rgba(145, 168, 160, 0.24)", 11 * scale, 1);
+        });
+      }
+
+      // 3. Draw Completed Strokes in crisp ivory/white
+      for (let i = 0; i < opts.completedCount && i < opts.strokes.length; i++) {
+        drawBrushStroke(ctx, opts.strokes[i].points, scale, "#eaf4f0", 11 * scale, 1);
+      }
+
+      // 4. Draw Active Animated Stroke in jade emerald (#5bb396)
+      if (opts.activeStrokeIndex >= 0 && opts.activeStrokeIndex < opts.strokes.length) {
+        drawBrushStroke(
+          ctx,
+          opts.strokes[opts.activeStrokeIndex].points,
+          scale,
+          "#5bb396",
+          11.5 * scale,
+          opts.activeProgress
+        );
+      }
+
+      // 5. Draw Hint Stroke if active
+      if (opts.hintStrokeIndex >= 0 && opts.hintStrokeIndex < opts.strokes.length) {
+        drawBrushStroke(ctx, opts.strokes[opts.hintStrokeIndex].points, scale, "#f4a261", 12 * scale, 1);
+      }
+
+      // 6. Draw User's live brush trail
+      if (opts.userPoints && opts.userPoints.length > 1) {
+        drawBrushStroke(ctx, opts.userPoints, scale, "#5bb396", 10 * scale, 1);
+      }
+    }
+
+    function drawBrushStroke(ctx, pts, scale, color, width, progress) {
+      if (!pts || pts.length < 2 || progress <= 0) return;
+      ctx.save();
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+
+      // Compute total path length for partial progress rendering
+      let totalLen = 0;
+      const segLens = [];
+      for (let i = 1; i < pts.length; i++) {
+        const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+        segLens.push(d);
+        totalLen += d;
+      }
+      const targetLen = totalLen * Math.min(1, progress);
+
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0] * scale, pts[0][1] * scale);
+      let acc = 0;
+      for (let i = 1; i < pts.length; i++) {
+        const seg = segLens[i - 1];
+        if (acc + seg <= targetLen) {
+          ctx.lineTo(pts[i][0] * scale, pts[i][1] * scale);
+          acc += seg;
+        } else {
+          const rem = targetLen - acc;
+          const t = seg > 0 ? rem / seg : 0;
+          const nx = pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * t;
+          const ny = pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * t;
+          ctx.lineTo(nx * scale, ny * scale);
+          break;
+        }
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Render Step-by-Step Mini Cards (Screenshot 2 upgrade: Pinyin directly under Chinese stroke name!)
+    function renderStrokeStepsAndList() {
+      const stepsContainer = document.getElementById("strokeStepsCardsContainer");
+      const listContainer = document.getElementById("strokeDetailedListContainer");
+      if (!stepsContainer || !listContainer) return;
+
+      stepsContainer.innerHTML = "";
+      listContainer.innerHTML = "";
+
+      strokeApp.strokes.forEach((st, idx) => {
+        const info = STROKE_TYPES[st.type] || { zh: st.type, py: "", ru: "Каллиграфическая черта", desc: "" };
+
+        // Build mini SVG showing MiZiGe + previous strokes + current stroke highlighted in teal
+        let pathsHtml = "";
+        strokeApp.strokes.forEach((otherSt, otherIdx) => {
+          const d = "M " + otherSt.points.map(p => `${p[0]} ${p[1]}`).join(" L ");
+          let strokeColor = "rgba(145, 168, 160, 0.22)";
+          if (otherIdx < idx) strokeColor = "#cfe0d9";
+          else if (otherIdx === idx) strokeColor = "#5bb396";
+          pathsHtml += `<path d="${d}" fill="none" stroke="${strokeColor}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />`;
+        });
+
+        const stepCard = document.createElement("div");
+        stepCard.className = "stroke-step-card" + (idx === 0 ? " active" : "");
+        stepCard.dataset.stepIdx = String(idx);
+        stepCard.innerHTML = `
+          <svg class="step-mini-svg" viewBox="0 0 100 100">
+            <line x1="0" y1="50" x2="100" y2="50" stroke="#4d3027" stroke-width="1.5" />
+            <line x1="50" y1="0" x2="50" y2="100" stroke="#4d3027" stroke-width="1.5" />
+            <line x1="0" y1="0" x2="100" y2="100" stroke="#3e261f" stroke-width="1" stroke-dasharray="4,4" />
+            <line x1="100" y1="0" x2="0" y2="100" stroke="#3e261f" stroke-width="1" stroke-dasharray="4,4" />
+            ${pathsHtml}
+          </svg>
+          <div class="step-num">${idx + 1}</div>
+          <div class="step-zh hanzi-font">${info.zh}</div>
+          <div class="step-py">${info.py}</div>
+          <div class="step-ru">${info.ru}</div>
+        `;
+        stepCard.addEventListener("click", () => focusStrokeStep(idx));
+        stepsContainer.appendChild(stepCard);
+
+        // Detailed row in "Названия черт по порядку"
+        const row = document.createElement("div");
+        row.className = "stroke-row";
+        row.innerHTML = `
+          <div style="font-size:13px;font-weight:700;color:var(--text-muted);min-width:20px;">${idx + 1}</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:baseline;gap:8px;">
+              <span class="hanzi-font" style="font-size:18px;font-weight:700;">${info.zh}</span>
+              <span style="font-size:14px;font-weight:600;color:var(--accent);">${info.py}</span>
+            </div>
+            <div style="font-size:13px;color:var(--text-secondary);">${info.ru}${info.desc ? ' — ' + info.desc : ''}</div>
+          </div>
+        `;
+        row.addEventListener("click", () => focusStrokeStep(idx));
+        listContainer.appendChild(row);
+      });
+    }
+
+    function highlightStepCard(idx) {
+      document.querySelectorAll("#strokeStepsCardsContainer .stroke-step-card").forEach(card => {
+        card.classList.toggle("active", parseInt(card.dataset.stepIdx, 10) === idx);
+      });
+    }
+
+    function focusStrokeStep(idx) {
+      highlightStepCard(idx);
+      if (strokeApp.mode === "anim") {
+        strokeApp.animStrokeIdx = idx;
+        strokeApp.animProgress = 1;
+        strokeApp.playing = false;
+        updatePlayPauseButtonUI();
+        stopStrokeAnimationLoop();
+        renderMainStrokeCanvas();
+      } else {
+        strokeApp.hintStrokeIdx = idx;
+        renderMainStrokeCanvas();
+        setTimeout(() => {
+          strokeApp.hintStrokeIdx = -1;
+          renderMainStrokeCanvas();
+        }, 900);
+      }
+    }
+
+    function speakStrokeChar() {
+      speakText(strokeApp.char);
+    }
+
+    // =========================================================================
+    // 13. TAB 2: RUSSIAN DICTIONARY & CUSTOM WORDS MANAGER
+    // =========================================================================
+    function renderDictionaryCategoryPills() {
+      const box = document.getElementById("dictCategoryPills");
+      if (!box) return;
+      box.innerHTML = "";
+      const cats = ["ALL", ...COURSE_LIST];
+      cats.forEach(c => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "course-pill" + (state.dictCategory === c ? " active" : "");
+        btn.textContent = c === "ALL" ? "Все слова" : (c === "MY" ? "★ Мои слова" : c);
+        btn.addEventListener("click", () => {
+          state.dictCategory = c;
+          renderDictionaryCategoryPills();
+          renderDictionaryList();
+        });
+        box.appendChild(btn);
+      });
+    }
+
+    function getFilteredDictionaryWords() {
+      const q = (document.getElementById("dictSearchInput")?.value || "").trim().toLowerCase();
+      const qPlain = normalizePinyinForCompare(q);
+      const statusFilter = document.getElementById("dictStatusFilter")?.value || "all";
+
+      return state.words.filter(w => {
+        if (state.dictCategory !== "ALL" && w.course !== state.dictCategory) return false;
+        const st = (state.srs[w.id] && state.srs[w.id].status) || "new";
+        if (statusFilter !== "all" && st !== statusFilter) return false;
+        if (!q) return true;
+        return (
+          w.hanzi.includes(q) ||
+          w.ru.toLowerCase().includes(q) ||
+          w.pinyin.toLowerCase().includes(q) ||
+          (qPlain && normalizePinyinForCompare(w.pinyin).includes(qPlain))
+        );
+      });
+    }
+
+    function renderDictionaryList() {
+      const list = getFilteredDictionaryWords();
+      const countEl = document.getElementById("dictCountLabel");
+      if (countEl) countEl.textContent = `Найдено слов: ${list.length}`;
+
+      const container = document.getElementById("dictWordsContainer");
+      if (!container) return;
+      container.innerHTML = "";
+
+      list.forEach(w => {
+        const st = (state.srs[w.id] && state.srs[w.id].status) || "new";
+        const stLabel = st === "mastered" ? "Выучено" : st === "learning" ? "В изучении" : "Новое";
+        const stColor = st === "mastered" ? "var(--success)" : st === "learning" ? "var(--warning)" : "var(--text-muted)";
+
+        const item = document.createElement("div");
+        item.className = "word-item";
+        item.innerHTML = `
+          <div class="word-hanzi hanzi-font">${w.hanzi}</div>
+          <div class="word-meta">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <span class="word-pinyin">${w.pinyin}</span>
+              <span style="font-size:11px;padding:1px 7px;border-radius:99px;background:var(--bg-elevated);color:var(--text-secondary);">
+                ${w.course === "MY" ? "★ Мои слова" : w.course}
+              </span>
+              <span style="font-size:11px;font-weight:700;color:${stColor};">● ${stLabel}</span>
+            </div>
+            <div class="word-ru">${w.ru}</div>
+            ${w.decomp ? `<div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">${w.decomp}</div>` : ""}
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button type="button" class="btn-icon" title="Озвучить" onclick="event.stopPropagation();speakText('${w.hanzi}')">🔊</button>
+            <button type="button" class="btn btn-sm" title="Порядок черт и пропись" onclick="event.stopPropagation();openStrokeById('${w.id}')">Черты</button>
+          </div>
+        `;
+        item.addEventListener("click", () => openStrokeScreen(w, false));
+        container.appendChild(item);
+      });
+    }
+
+    function openStrokeById(wordId) {
+      const w = state.words.find(x => x.id === wordId);
+      if (w) openStrokeScreen(w, false);
+    }
+
+    function trainCurrentDictFilter() {
+      const list = getFilteredDictionaryWords();
+      if (list.length === 0) {
+        showToast("Список пуст — измените фильтр поиска");
+        return;
+      }
+      switchTab("learn");
+      session.active = true;
+      session.queue = list.slice(0, state.dailyLimit);
+      session.index = 0;
+      document.getElementById("learn-dashboard-view").classList.add("hidden");
+      document.getElementById("learn-session-view").classList.remove("hidden");
+      renderCurrentSessionCard();
+    }
+
+    // Add Custom Word Modal
+    function openAddWordModal() {
+      document.getElementById("addWordModal").classList.add("open");
+      setTimeout(() => document.getElementById("newWordHanzi")?.focus(), 40);
+    }
+
+    function closeAddWordModal() {
+      document.getElementById("addWordModal").classList.remove("open");
+    }
+
+    function saveCustomWord() {
+      const hz = (document.getElementById("newWordHanzi")?.value || "").trim();
+      const pyRaw = (document.getElementById("newWordPinyin")?.value || "").trim();
+      const ru = (document.getElementById("newWordRu")?.value || "").trim();
+      const exZh = (document.getElementById("newWordExZh")?.value || "").trim();
+      const exRu = (document.getElementById("newWordExRu")?.value || "").trim();
+
+      if (!hz || !pyRaw || !ru) {
+        showToast("Заполните иероглиф, пиньинь и русский перевод");
+        return;
+      }
+      const py = convertNumberedPinyin(pyRaw);
+      const newObj = {
+        id: "my_" + Date.now(),
+        hanzi: hz,
+        pinyin: py,
+        pinyinRaw: pyRaw,
+        ru: ru,
+        course: "MY",
+        hsk: 1,
+        decomp: "Добавлено в пользовательский список «★ Мои слова».",
+        exZh: exZh || `${hz} — важное слово.`,
+        exPy: py,
+        exRu: exRu || ru
+      };
+      state.words.unshift(newObj);
+      if (!state.selectedCourses.includes("MY")) {
+        state.selectedCourses.unshift("MY");
+      }
+      saveState();
+      closeAddWordModal();
+      ["newWordHanzi", "newWordPinyin", "newWordRu", "newWordExZh", "newWordExRu"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+      renderLearnDashboard();
+      renderDictionaryList();
+      showToast(`Слово «${hz}» добавлено в «★ Мои слова»!`);
+    }
+
+    function openBulkImportModal() {
+      document.getElementById("bulkImportModal").classList.add("open");
+    }
+
+    function closeBulkImportModal() {
+      document.getElementById("bulkImportModal").classList.remove("open");
+    }
+
+    function processBulkImport() {
+      const raw = document.getElementById("bulkImportTextarea")?.value || "";
+      const lines = raw.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+      let added = 0;
+      lines.forEach((line, idx) => {
+        const parts = line.split(/\s*[-—|;,\t]\s*/);
+        if (parts.length >= 3) {
+          const hz = parts[0].trim();
+          const py = convertNumberedPinyin(parts[1].trim());
+          const ru = parts.slice(2).join(", ").trim();
+          if (hz && ru) {
+            state.words.unshift({
+              id: "my_bulk_" + Date.now() + "_" + idx,
+              hanzi: hz,
+              pinyin: py,
+              pinyinRaw: parts[1].trim(),
+              ru: ru,
+              course: "MY",
+              hsk: 1,
+              decomp: "Импортировано в «★ Мои слова».",
+              exZh: hz,
+              exPy: py,
+              exRu: ru
+            });
+            added++;
+          }
+        }
+      });
+      if (added > 0) {
+        if (!state.selectedCourses.includes("MY")) state.selectedCourses.unshift("MY");
+        saveState();
+        closeBulkImportModal();
+        document.getElementById("bulkImportTextarea").value = "";
+        renderLearnDashboard();
+        renderDictionaryList();
+        showToast(`Импортировано слов в «★ Мои слова»: ${added}`);
+      } else {
+        showToast("Укажите строки в формате: Иероглиф - Пиньинь - Перевод");
+      }
+    }
+
+    // =========================================================================
+    // 14. TAB 3: STROKES CATALOG, CALLIGRAPHY RULES & PRINTABLE COPYBOOK
+    // =========================================================================
+    function renderStrokesReferenceTab() {
+      // Quick practice character pills
+      const quickRow = document.getElementById("quickPracticeCharsRow");
+      if (quickRow) {
+        quickRow.innerHTML = "";
+        const sampleWords = state.words.slice(0, 14);
+        sampleWords.forEach(w => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "btn btn-sm";
+          b.innerHTML = `<span class="hanzi-font" style="font-size:17px;">${w.hanzi}</span> <span style="color:var(--accent);">${w.pinyin}</span>`;
+          b.addEventListener("click", () => openStrokeScreen(w, false));
+          quickRow.appendChild(b);
+        });
+      }
+
+      // 7 Stroke Order Rules
+      const rulesBox = document.getElementById("strokeRulesContainer");
+      if (rulesBox) {
+        rulesBox.innerHTML = "";
+        STROKE_RULES.forEach(r => {
+          const card = document.createElement("div");
+          card.className = "word-item";
+          card.innerHTML = `
+            <div class="word-hanzi hanzi-font" style="color:var(--accent);">${r.ex}</div>
+            <div class="word-meta">
+              <div style="font-weight:700;">${r.ru}</div>
+              <div style="font-size:12.5px;color:var(--accent);">${r.zh} · ${r.py}</div>
+            </div>
+            <button type="button" class="btn btn-sm">Показать черты ›</button>
+          `;
+          card.addEventListener("click", () => {
+            openStrokeScreen({
+              id: "rule_" + r.ex,
+              hanzi: r.ex,
+              pinyin: r.py,
+              ru: r.ru,
+              course: "Правило каллиграфии"
+            }, false);
+          });
+          rulesBox.appendChild(card);
+        });
+      }
+
+      // Full Strokes Catalog
+      const catBox = document.getElementById("allStrokesCatalogContainer");
+      if (catBox) {
+        catBox.innerHTML = "";
+        Object.values(STROKE_TYPES).forEach((st, i) => {
+          const row = document.createElement("div");
+          row.className = "stroke-row";
+          row.innerHTML = `
+            <div style="font-size:12px;color:var(--text-muted);min-width:22px;">${i + 1}</div>
+            <div class="hanzi-font" style="font-size:22px;font-weight:700;min-width:64px;color:var(--accent);">${st.zh}</div>
+            <div style="flex:1;">
+              <div style="font-size:14px;font-weight:700;">${st.py} — ${st.ru}</div>
+              <div style="font-size:12.5px;color:var(--text-secondary);">${st.desc}</div>
+            </div>
+          `;
+          catBox.appendChild(row);
+        });
+      }
+    }
+
+    function togglePrintableCopybook() {
+      const area = document.getElementById("printableCopybookArea");
+      if (!area) return;
+      const isHidden = area.classList.toggle("hidden");
+      if (!isHidden) {
+        const container = document.getElementById("copybookRowsContainer");
+        container.innerHTML = "";
+        const targetWords = state.words.filter(w => state.selectedCourses.includes(w.course)).slice(0, 8);
+        targetWords.forEach(w => {
+          const ch = Array.from(w.hanzi)[0];
+          const row = document.createElement("div");
+          row.style.cssText = "display:flex;align-items:center;gap:8px;overflow-x:auto;padding:6px 0;";
+          let cells = `
+            <div style="min-width:110px;">
+              <div class="hanzi-font" style="font-size:22px;font-weight:700;">${w.hanzi}</div>
+              <div style="font-size:12px;color:var(--accent);">${w.pinyin}</div>
+              <div style="font-size:11px;color:var(--text-secondary);">${w.ru.split(";")[0]}</div>
+            </div>
+          `;
+          for (let i = 0; i < 6; i++) {
+            const opacity = i === 0 ? "0.9" : i < 3 ? "0.28" : "0.08";
+            cells += `
+              <div class="hero-preview-grid hanzi-font" style="width:58px;height:58px;font-size:38px;color:rgba(234,244,240,${opacity});">
+                ${ch}
+              </div>
+            `;
+          }
+          row.innerHTML = cells;
+          container.appendChild(row);
+        });
+      }
+    }
+
+    // =========================================================================
+    // 15. TAB 4: GRAMMAR & INTERACTIVE SENTENCE BUILDER
+    // =========================================================================
+    let grammarState = {
+      index: 0,
+      builtIndices: [],
+      poolOrder: []
+    };
+
+    function renderGrammarTab() {
+      loadGrammarExercise(grammarState.index);
+      const listEl = document.getElementById("grammarCardsList");
+      if (!listEl) return;
+      listEl.innerHTML = "";
+      GRAMMAR_REFERENCE.forEach(g => {
+        const card = document.createElement("div");
+        card.style.cssText = "background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:14px;";
+        card.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:15px;font-weight:700;">${g.title}</span>
+            <span style="font-size:11.5px;padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-weight:700;">${g.level}</span>
+          </div>
+          <div style="font-size:12.5px;font-weight:700;color:var(--accent);margin-bottom:6px;">Формула: ${g.formula}</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">${g.desc}</div>
+          <div style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div class="hanzi-font" style="font-size:16px;font-weight:700;">${g.exZh}</div>
+              <div style="font-size:12px;color:var(--accent);">${g.exPy}</div>
+              <div style="font-size:12px;color:var(--text-secondary);">${g.exRu}</div>
+            </div>
+            <button type="button" class="btn-icon" onclick="speakText('${g.exZh}')">🔊</button>
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    function loadGrammarExercise(idx) {
+      grammarState.index = (idx + GRAMMAR_EXERCISES.length) % GRAMMAR_EXERCISES.length;
+      const ex = GRAMMAR_EXERCISES[grammarState.index];
+      grammarState.builtIndices = [];
+      grammarState.poolOrder = ex.tokens.map((_, i) => i).sort(() => Math.random() - 0.5);
+
+      document.getElementById("grammarExTag").textContent = ex.tag;
+      document.getElementById("grammarExCounter").textContent = `${grammarState.index + 1} / ${GRAMMAR_EXERCISES.length}`;
+      document.getElementById("grammarPromptRu").textContent = ex.ru;
+      document.getElementById("grammarFormulaHint").textContent = `Схема: ${ex.formula}`;
+      document.getElementById("grammarFeedbackBox").classList.add("hidden");
+      renderSentenceTilesUI();
+    }
+
+    function renderSentenceTilesUI() {
+      const ex = GRAMMAR_EXERCISES[grammarState.index];
+      const builtEl = document.getElementById("sentenceBuiltArea");
+      const poolEl = document.getElementById("sentencePoolArea");
+      if (!builtEl || !poolEl) return;
+
+      builtEl.innerHTML = "";
+      if (grammarState.builtIndices.length === 0) {
+        builtEl.innerHTML = `<span style="font-size:13px;color:var(--text-muted);">Нажимайте на карточки со словами ниже, чтобы собрать предложение...</span>`;
+      } else {
+        grammarState.builtIndices.forEach((tokenIdx, pos) => {
+          const tok = ex.tokens[tokenIdx];
+          const tile = document.createElement("button");
+          tile.type = "button";
+          tile.className = "word-tile hanzi-font";
+          tile.innerHTML = `<span>${tok.zh}</span><span class="tile-py">${tok.py}</span>`;
+          tile.addEventListener("click", () => {
+            grammarState.builtIndices.splice(pos, 1);
+            renderSentenceTilesUI();
+          });
+          builtEl.appendChild(tile);
+        });
+      }
+
+      poolEl.innerHTML = "";
+      grammarState.poolOrder.forEach(tokenIdx => {
+        if (grammarState.builtIndices.includes(tokenIdx)) return;
+        const tok = ex.tokens[tokenIdx];
+        const tile = document.createElement("button");
+        tile.type = "button";
+        tile.className = "word-tile hanzi-font";
+        tile.innerHTML = `<span>${tok.zh}</span><span class="tile-py">${tok.py}</span>`;
+        tile.addEventListener("click", () => {
+          grammarState.builtIndices.push(tokenIdx);
+          renderSentenceTilesUI();
+        });
+        poolEl.appendChild(tile);
+      });
+    }
+
+    function checkBuiltSentence() {
+      const ex = GRAMMAR_EXERCISES[grammarState.index];
+      const fb = document.getElementById("grammarFeedbackBox");
+      if (!fb) return;
+      const builtStr = grammarState.builtIndices.map(i => ex.tokens[i].zh).join("");
+      const targetStr = ex.tokens.map(t => t.zh).join("");
+      fb.classList.remove("hidden");
+      if (builtStr === targetStr) {
+        fb.style.background = "var(--success-soft)";
+        fb.style.color = "var(--success)";
+        fb.textContent = `✓ Безупречно! ${targetStr} — ${ex.explain}`;
+        speakText(targetStr);
+      } else {
+        fb.style.background = "var(--warning-soft)";
+        fb.style.color = "var(--warning)";
+        fb.textContent = `Попробуйте другой порядок слов. Правильный ответ: ${targetStr}. (${ex.explain})`;
+      }
+    }
+
+    function resetCurrentSentence() {
+      grammarState.builtIndices = [];
+      document.getElementById("grammarFeedbackBox").classList.add("hidden");
+      renderSentenceTilesUI();
+    }
+
+    function StepGrammarExercise(delta) {
+      loadGrammarExercise(grammarState.index + delta);
+    }
+
+    function speakCurrentGrammarSentence() {
+      const ex = GRAMMAR_EXERCISES[grammarState.index];
+      speakText(ex.tokens.map(t => t.zh).join(""));
+    }
+
+    // =========================================================================
+    // 16. TAB 5: PROGRESS, SETTINGS & BACKUP
+    // =========================================================================
+    function renderProgressTab() {
+      const box = document.getElementById("hskProgressBarsContainer");
+      if (!box) return;
+      box.innerHTML = "";
+
+      COURSE_LIST.forEach(course => {
+        const courseWords = state.words.filter(w => w.course === course);
+        const total = courseWords.length;
+        const learned = courseWords.filter(w => state.srs[w.id] && (state.srs[w.id].status === "learning" || state.srs[w.id].status === "mastered")).length;
+        const pct = total > 0 ? Math.round((learned / total) * 100) : 0;
+        const row = document.createElement("div");
+        row.innerHTML = `
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px;">
+            <span>${course === "MY" ? "★ Мои слова" : course}</span>
+            <span style="color:var(--accent);">${learned} / ${total} (${pct}%)</span>
+          </div>
+          <div style="height:8px;background:var(--bg-input);border-radius:99px;overflow:hidden;">
+            <div style="height:100%;width:${pct}%;background:var(--accent);border-radius:99px;"></div>
+          </div>
+        `;
+        box.appendChild(row);
+      });
+
+      document.getElementById("dailyLimitValue").textContent = String(state.dailyLimit);
+      document.getElementById("cardFrontSelect").value = state.cardFront;
+      const audioBtn = document.getElementById("autoAudioToggleBtn");
+      if (audioBtn) {
+        audioBtn.textContent = state.autoAudio ? "Вкл" : "Выкл";
+        audioBtn.classList.toggle("active", state.autoAudio);
+      }
+    }
+
+    function changeDailyLimit(delta) {
+      state.dailyLimit = Math.max(5, Math.min(100, state.dailyLimit + delta));
+      saveState();
+      renderProgressTab();
+    }
+
+    function updateCardFrontSetting(val) {
+      state.cardFront = val;
+      saveState();
+      showToast("Настройка лицевой стороны сохранена");
+    }
+
+    function toggleAutoAudio() {
+      state.autoAudio = !state.autoAudio;
+      saveState();
+      renderProgressTab();
+    }
+
+    function setAppTheme(theme) {
+      state.theme = theme;
+      document.documentElement.setAttribute("data-theme", theme);
+      saveState();
+    }
+
+    function openBackupModal() {
+      const ta = document.getElementById("backupJsonTextarea");
+      if (ta) ta.value = JSON.stringify(state, null, 2);
+      document.getElementById("backupModal")?.classList.add("open");
+    }
+
+    function closeBackupModal() {
+      document.getElementById("backupModal")?.classList.remove("open");
+    }
+
+    function exportProgressBackup() {
+      openBackupModal();
+      downloadBackupFileDirect();
+    }
+
+    function downloadBackupFileDirect() {
+      const dataStr = JSON.stringify(state, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "hanzi_pro_backup.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Файл hanzi_pro_backup.json отправлен в «Загрузки» (и открыт на экране)");
+    }
+
+    function copyBackupJsonToClipboard() {
+      const ta = document.getElementById("backupJsonTextarea");
+      if (!ta) return;
+      ta.select();
+      try {
+        document.execCommand("copy");
+        showToast("📋 JSON-бэкап скопирован в буфер обмена!");
+      } catch (e) {
+        showToast("Выделите текст в поле и нажмите Ctrl+C");
+      }
+    }
+
+    function restoreBackupObject(parsed) {
+      if (!parsed || typeof parsed !== "object") {
+        showToast("Некорректный формат бэкапа");
+        return false;
+      }
+      // Support both new format and original rizokrut.github.io/hanzi-app backup format
+      if (Array.isArray(parsed.words)) {
+        state = Object.assign(state, parsed);
+      } else if (Array.isArray(parsed.customWords) || parsed.progress || parsed.srs) {
+        if (Array.isArray(parsed.customWords)) {
+          parsed.customWords.forEach((cw, i) => {
+            const hz = cw.hanzi || cw.char || cw.word || "";
+            if (hz && !state.words.some(w => w.hanzi === hz)) {
+              state.words.unshift({
+                id: "my_imp_" + Date.now() + "_" + i,
+                hanzi: hz,
+                pinyin: convertNumberedPinyin(cw.pinyin || ""),
+                pinyinRaw: cw.pinyin || "",
+                ru: cw.ru || cw.translation || cw.meaning || "",
+                course: "MY",
+                hsk: 1,
+                decomp: "Импортировано из резервной копии.",
+                exZh: cw.example || cw.exZh || hz,
+                exPy: cw.pinyin || "",
+                exRu: cw.exampleRu || cw.exRu || ""
+              });
+            }
+          });
+        }
+        if (parsed.srs && typeof parsed.srs === "object") {
+          state.srs = Object.assign(state.srs, parsed.srs);
+        }
+      } else {
+        showToast("Структура JSON не распознана");
+        return false;
+      }
+      saveState();
+      renderLearnDashboard();
+      renderDictionaryList();
+      renderProgressTab();
+      closeBackupModal();
+      showToast("✓ Резервная копия успешно восстановлена!");
+      return true;
+    }
+
+    function applyBackupFromTextarea() {
+      const ta = document.getElementById("backupJsonTextarea");
+      if (!ta || !ta.value.trim()) {
+        showToast("Вставьте JSON-код бэкапа в текстовое поле");
+        return;
+      }
+      try {
+        const parsed = JSON.parse(ta.value.trim());
+        restoreBackupObject(parsed);
+      } catch (e) {
+        showToast("Ошибка в формате JSON");
+      }
+    }
+
+    function triggerImportBackup() {
+      document.getElementById("importFileInput")?.click();
+    }
+
+    function handleImportFile(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(String(reader.result));
+          restoreBackupObject(parsed);
+        } catch (e) {
+          showToast("Ошибка чтения файла бэкапа");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // =========================================================================
+    // 17. INITIALIZATION
+    // =========================================================================
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(() => {}); }
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSavedState();
+      document.documentElement.setAttribute("data-theme", state.theme || "dark");
+      renderLearnDashboard();
+      initCardSwipeAndHotkeys();
+      initMainStrokeCanvasInteraction();
+    });
+  </script>
 </body>
 </html>

@@ -1,16 +1,18 @@
 {
-  "name": "Ханьцзы — иероглифы HSK",
-  "short_name": "Ханьцзы",
-  "description": "Карточки, порядок черт и озвучка для HSK 3.0. Работает без интернета.",
-  "lang": "ru",
-  "start_url": "./",
-  "scope": "./",
+  "name": "Ханьцзы Pro — Изучение китайских иероглифов (Офлайн)",
+  "short_name": "Ханьцзы Pro",
+  "description": "Веб-приложение для изучения китайских иероглифов HSK 1–9, прописей и грамматики на русском языке без интернета",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#E7EDEA",
-  "theme_color": "#E7EDEA",
+  "background_color": "#0d1512",
+  "theme_color": "#0d1512",
+  "lang": "ru",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%2315221e'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='68' fill='%235bb396' font-family='serif'%3E汉%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
   ]
 }
