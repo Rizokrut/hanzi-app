@@ -99,8 +99,8 @@ function gram(){M.innerHTML=`<h1>Грамматика</h1>`+G.map(g=>`<details><
 document.body.addEventListener("click",e=>{const t=e.target,go=t.closest("[data-go]"),n=t.closest("nav button"),s=t.closest("[data-s]"),o=t.closest("[data-o]"),m=t.closest("[data-m]");
 if(go||n){tab=(go||n).dataset.go||(n&&n.dataset.t);queue=[];render()}else if(m){mode=+m.dataset.m;learn()}else if(s){toggle(+s.dataset.s);s.classList.toggle("on")}else if(o)open(+o.dataset.o)});
 async function boot(){M.innerHTML='<div class="empty">Загрузка…</div>';
-try{HSK=await(await fetch("data/hsk.json")).json()}catch(e){M.innerHTML='<div class="empty">Не удалось загрузить словарь</div>';return}
+try{HSK=await(await fetch("hsk.json")).json()}catch(e){M.innerHTML='<div class="empty">Не удалось загрузить словарь</div>';return}
 W=HSK.map((a,i)=>({id:i,h:a[0],p:a[1],r:a[2],l:a[3],n:norm(a[1])}));render();
-try{ST=await(await fetch("data/strokes.json")).json()}catch(e){}}
+try{ST=await(await fetch("strokes.json")).json()}catch(e){}}
 boot();
 if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
